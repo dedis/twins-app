@@ -50,6 +50,7 @@ export class SignalRClient {
             // }
             // const outboundMessage = createOutboundMessage(this.agencyConnection, ack);
             // const packedMessage = await this.agent.context.messageSender.packMessage(outboundMessage);
+            console.log('Received message');
             await this.agent.receiveMessage(JSON.parse(message));
             // await this.connection?.invoke('Acknowledge', JSON.stringify(packedMessage));
         });
