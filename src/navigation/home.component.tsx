@@ -1,14 +1,11 @@
 import React from 'react';
 import { SafeAreaView } from 'react-navigation';
-import { Button, Divider, Layout, Spinner } from '@ui-kitten/components';
+import { Image } from 'react-native';
+import { Button, Layout, Spinner } from '@ui-kitten/components';
 import QRCode from 'react-native-qrcode-svg';
 import {default as appTheme} from '../custom-theme.json';
-import { RealTimeInboundTransporter, HTTPOutboundTransporter } from 'transporters.js';
-import { InitConfig } from 'aries-framework-javascript/build/lib/types';
-import { Agent } from 'aries-framework-javascript';
 import RNFS from 'react-native-fs';
-// @ts-ignore
-import indy from 'rn-indy-sdk';
+import images from '../res/images';
 
 enum AgentState {
   UNPROVISIONED,
@@ -28,6 +25,14 @@ export const HomeScreen = ({ navigation, screenProps }) => {
   const onProvisionPress = async () => {
     console.log('Provisioning...');
     setAgentState(AgentState.PROVISIONING);
+    // TODO: Why does agent.init() not just open the existing wallet?
+    RNFS.unlink(RNFS.DocumentDirectoryPath + '/.indy_wallet')
+      .then(() => {
+        console.log("Old wallet nuked.")
+      })
+      .catch((err: Error) => {
+        console.log('Ignored error from wallet cleanup: ', err.message);
+      })
     await agent.init();
     setAgentState(AgentState.PROVISIONED)
   };
@@ -41,7 +46,6 @@ export const HomeScreen = ({ navigation, screenProps }) => {
   }
 
   const onScanInvite = () => {
-    console.log('In here');
     navigation.navigate('Scan');
   }
 
@@ -65,8 +69,9 @@ export const HomeScreen = ({ navigation, screenProps }) => {
       )
     case AgentState.PROVISIONED:
       return (
-        <SafeAreaView style={{ flex: 1 }}>
-          <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
+          <Image style={{flex: 6, width: '100%', resizeMode: 'stretch'}} source={images.bg}/>
+          <Layout style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
             <Button onPress={onCreateInvite}>Create Invite</Button>
             <Button onPress={onScanInvite}>Scan Invite</Button>
           </Layout>

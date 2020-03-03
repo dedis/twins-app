@@ -20,6 +20,9 @@ import { ConsentService } from './agent/protocols/consent/ConsentService';
 import { MessageType as ConsentMessageType } from './agent/protocols/consent/messages';
 import { ConsentChallengeResponseHandler } from './agent/handlers/consent/ConsentChallengeResponseHandler';
 
+// ### Insert mediator URL here ###
+const med = 'https://4824ef25.ngrok.io';
+
 debug.enable('aries-framework-javascript');
 
 const theme = {...darkTheme, ...appTheme};
@@ -32,8 +35,8 @@ const App = () => {
 
   const config: InitConfig = {
     label: 'EdgeAgent',
-    agencyUrl: 'https://1092f36f.ngrok.io', // TODO: Replace with Mediator URL
-    url: 'https://1092f36f.ngrok.io', // TODO: Replace with Mediator URL
+    agencyUrl: med,
+    url: med,
     port: 80,
     walletConfig: {
       id: 'EdgeWallet',

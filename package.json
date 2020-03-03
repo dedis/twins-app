@@ -8,8 +8,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "preinstall": "cd ../cothority/external/js/cothority && npm i && npm run build && cd ../../../../aries-framework-javascript && npm i && npm pack && cd ../rn-indy-sdk && yarn install && yarn build && yarn pack",
-    "postinstall": "rn-nodeify --hack --install --yarn"
+    "postinstall": "rn-nodeify --hack --install --yarn && grep -v bundle.min.js 'node_modules/@dedis/cothority/package.json' > new && mv new 'node_modules/@dedis/cothority/package.json'"
   },
   "dependencies": {
     "@dedis/cothority": "../cothority/external/js/cothority/dist",

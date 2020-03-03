@@ -4,7 +4,6 @@ import { LayoutItem } from '../model/layout-item.model';
 import { InboundMessage } from 'aries-framework-javascript/build/lib/types';
 import { Event } from 'aries-framework-javascript/build/lib/agent/events';
 import { Connection } from 'aries-framework-javascript';
-import uuid from 'uuid/v4';
 import { MessageType as ConsentMessageType } from '../agent/protocols/consent/messages';
 import { consentService } from '../App';
 

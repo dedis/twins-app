@@ -12,7 +12,10 @@ The `package.json` is checked in expecting copies of the following modules in th
 * `git clone -b demo https://github.com/gnarula/aries-framework-javascript.git`
 * `git clone https://github.com/AbsaOSS/rn-indy-sdk`
 
-Each one needs a slightly different process to prepare it for use, which is managed by the `preinstall` step in `package.json`.
+Each one needs a slightly different process to prepare it for use:
+* `cd ../cothority/external/js/cothority && npm i && npm run build`
+* `cd ../aries-framework-javascript && npm i && npm pack`
+* `cd ../rn-indy-sdk && yarn install && yarn build && yarn pack`
 
 ## Node Install
 
