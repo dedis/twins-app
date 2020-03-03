@@ -21,10 +21,11 @@ import { MessageType as ConsentMessageType } from './agent/protocols/consent/mes
 import { ConsentChallengeResponseHandler } from './agent/handlers/consent/ConsentChallengeResponseHandler';
 
 // ### Insert mediator URL here ###
-const med = 'https://4824ef25.ngrok.io';
+export const mediatorURL = 'https://4824ef25.ngrok.io';
+// ### Insert your Byzcoin ID here ###
+export const bcID = '310ccffa343718ae4a29164bb74e8b8dee59fae302a3b5a131ff37bee8ca6224';
 
 debug.enable('aries-framework-javascript');
-
 const theme = {...darkTheme, ...appTheme};
 
 export const consentService = new ConsentService();
@@ -35,8 +36,8 @@ const App = () => {
 
   const config: InitConfig = {
     label: 'EdgeAgent',
-    agencyUrl: med,
-    url: med,
+    agencyUrl: mediatorURL,
+    url: mediatorURL,
     port: 80,
     walletConfig: {
       id: 'EdgeWallet',

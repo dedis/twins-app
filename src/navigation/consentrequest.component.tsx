@@ -2,33 +2,24 @@ import React from 'react';
 import { Layout, TopNavigation, useStyleSheet, StyleService, TopNavigationAction, IconElement, Icon, Card, Button } from '@ui-kitten/components'
 import { useSafeArea } from 'react-native-safe-area-context';
 import { ImageStyle, View, Text, StyleSheet } from 'react-native';
-import { color } from 'react-native-reanimated';
 import rosterData from '../roster';
-import Cothority from '@dedis/cothority';
 import DarcInstance from '@dedis/cothority/byzcoin/contracts/darc-instance';
 import { Rule, SignerEd25519, IdentityDid } from '@dedis/cothority/darc';
 import { Roster } from '@dedis/cothority/network/proto';
 import ByzCoinRPC from '@dedis/cothority/byzcoin/byzcoin-rpc';
-import Log from '@dedis/cothority/log';
 import { createOutboundMessage } from 'aries-framework-javascript/build/lib/protocols/helpers';
-import { Connection, Agent } from 'aries-framework-javascript';
+import { Agent } from 'aries-framework-javascript';
 import { createConsentResponse, ConsentStatus } from '../agent/protocols/consent/messages';
 import { SkipchainRPC, SkipBlock } from '@dedis/cothority/skipchain';
 import { GetUpdateChain, GetUpdateChainReply } from '@dedis/cothority/skipchain/proto';
 import { RosterWSConnection } from '@dedis/cothority/network/connection';
+import { bcID } from '../App';
 
 export const ConsentRequestScreen = ({ navigation, screenProps }) => {
-  const themedStyles = StyleService.create({
-    container: {
-      flex: 1,
-    },
-  });
-
   const safeArea = useSafeArea();
-  let styles = useStyleSheet(themedStyles);
 
   const { agent } = screenProps;
-  const { documentDarc, publicDid, comment, verkey } = navigation.getParam('data');
+  const { documentDarc, publicDid, orgName, studyName, verkey } = navigation.getParam('data');
 
   const renderBackAction = (): React.ReactElement => {
     return <TopNavigationAction
@@ -42,11 +33,10 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
   );
 
   const onGrantConsent = async () => {
-    // Log.lvl = 4;
     try {
       const roster = Roster.fromTOML(rosterData);
       console.log('got roster');
-      const genesisBlock = Buffer.from('310ccffa343718ae4a29164bb74e8b8dee59fae302a3b5a131ff37bee8ca6224', 'hex');
+      const genesisBlock = Buffer.from(bcID, 'hex');
       const skipchainRpc = new SkipchainRPC(roster);
       const latestBlock = await getLatestBlock(skipchainRpc, genesisBlock, false);
       console.log(`LatestBlock id: ${latestBlock.hash.toString('hex')}`)
@@ -138,34 +128,41 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
     return blocks.pop() as SkipBlock;
   }
 
-  const Footer = () => (
-    <View style={footerStyles.container}>
-      <Button
-        style={footerStyles.control}
-        size='small'
-        status='danger' >
-        DENY
-      </Button>
-      <Button
-        style={footerStyles.control}
-        size='small'
-        status='primary'
-        onPress={onGrantConsent}
-      >
-        GRANT
-      </Button>
-    </View>
-  );
-
-  const footerStyles = StyleSheet.create({
+  const styles = StyleSheet.create({
     container: {
       flexDirection: 'row',
       justifyContent: 'flex-end',
     },
-    control: {
+    button: {
+      width: 150,
       marginHorizontal: 4,
+    },
+    card: {
+      backgroundColor: 'rgba(255,255,255,255)'
     }
   });
+
+  const FooterDeny = () => (
+    <View style={styles.container}>
+      <Button
+        style={styles.button}
+        size='small' status='danger'>
+        No Thanks.
+      </Button>
+    </View>
+  );
+  const FooterGrant = () => (
+    <View style={styles.container}>
+      <Button
+        style={styles.button}
+        size='small'
+        status='primary'
+        onPress={onGrantConsent}
+      >
+        I consent.
+      </Button>
+    </View>
+  );
 
   return (
     <Layout
@@ -177,10 +174,27 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
         title='Consent Request'
         leftControl={renderBackAction()}
       />
-      <View style={{ margin: 10 }}>
-        <Card footer={Footer}>
+      <View style={{margin: 10}}>
+        <Card style={styles.card}>
           <Text>
-            {comment}
+           <Text style={{fontWeight: 'bold'}}>{orgName}</Text> invites you to share your biological and digital samples
+            in order to participate in the study: <Text style={{fontWeight: 'bold'}}>{studyName}</Text>.
+          </Text>
+        </Card>
+        <Card style={styles.card} footer={FooterGrant}>
+          <Text>
+            When you consent to share your data with {orgName}, your biological samples and data about you
+            will be securely released to them.
+            {"\n\n"}
+            You can revoke this consent at any time, and {orgName} will be notified and is required to destroy
+            data about you and samples from you.
+          </Text>
+        </Card>
+        <Card style={styles.card} footer={FooterDeny}>
+          <Text>
+            If you do not consent, no information will be shared about you. {orgName} will know
+            that some patients have declined to share their data, but will not know your
+            identity.
           </Text>
         </Card>
       </View>
