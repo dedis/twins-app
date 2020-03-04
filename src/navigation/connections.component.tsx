@@ -24,6 +24,7 @@ export const ConnectionsScreen = ({ navigation, screenProps }): LayoutListElemen
   const [ connectionState, setConnectionState ] = React.useState<Connections[]>([]);
 
   useEffect(() => {
+    console.log('Waiting for connections...');
     agent.context.eventEmitter.on(Event.CONNECTION_ESTABLISHED, (connection: Connection) => {
       console.log('In here, connection got added');
       console.log(connection);

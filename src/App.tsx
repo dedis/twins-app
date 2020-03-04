@@ -21,7 +21,7 @@ import { MessageType as ConsentMessageType } from './agent/protocols/consent/mes
 import { ConsentChallengeResponseHandler } from './agent/handlers/consent/ConsentChallengeResponseHandler';
 
 // ### Insert mediator URL here ###
-export const mediatorURL = 'http://b081c174.ngrok.io';
+export const mediatorURL = 'http://25f50117.ngrok.io';
 // ### Insert your Byzcoin ID here ###
 export const bcID = '310ccffa343718ae4a29164bb74e8b8dee59fae302a3b5a131ff37bee8ca6224';
 

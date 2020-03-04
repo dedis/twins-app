@@ -31,6 +31,7 @@ export const ScanScreen = ({ navigation, screenProps }) => {
     console.log('Accepting invitation...');
     await agent.acceptInvitationUrl(e.data);
     console.log('Done');
+    navigation.navigate('Notifications');
   }
 
   return (

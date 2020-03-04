@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, TopNavigation, useStyleSheet, StyleService, TopNavigationAction, IconElement, Icon, Card, Button } from '@ui-kitten/components'
 import { useSafeArea } from 'react-native-safe-area-context';
-import { ImageStyle, View, Text, StyleSheet } from 'react-native';
+import { ImageStyle, View, Text, Image, StyleSheet, ToastAndroid } from 'react-native';
 import rosterData from '../roster';
 import DarcInstance from '@dedis/cothority/byzcoin/contracts/darc-instance';
 import { Rule, SignerEd25519, IdentityDid } from '@dedis/cothority/darc';
@@ -19,8 +19,10 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
   const safeArea = useSafeArea();
 
   const { agent } = screenProps;
-  const { documentDarc, publicDid, orgName, studyName, verkey } = navigation.getParam('data');
-  // const [ documentDarc, publicDid, orgName, studyName, verkey ] = ['', '', 'DEDIS Pharma', 'amphotericin in-vitro trial', '13123123132'];
+  const { index, notificationState, setNotificationState } = navigation.getParam('data');
+  const { documentDarc, publicDid, orgName, studyName, verkey, status } = notificationState[index];
+
+  const [ consentActionState, setConsentActionState ] = React.useState<boolean>(false);
 
   const renderBackAction = (): React.ReactElement => {
     return <TopNavigationAction
@@ -35,6 +37,7 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
 
   const onGrantConsent = async () => {
     try {
+      setConsentActionState(true);
       const roster = Roster.fromTOML(rosterData);
       console.log('got roster');
       const genesisBlock = Buffer.from(bcID, 'hex');
@@ -71,6 +74,14 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
         createConsentResponse(documentDarc, ConsentStatus.GRANTED)
       ));
       console.log('Sent consent response');
+      setNotificationState(prevNotifications => [
+        ...prevNotifications.slice(0, index),
+        {
+          ...notificationState[index],
+          status: ConsentStatus.GRANTED
+        },
+        ...prevNotifications.slice(index+1, prevNotifications.length)
+      ]);
     } catch (e) {
       console.log(e);
     }
@@ -144,27 +155,51 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
       padding: 25,
       color: 'color-basic-500'
     },
+    currentStatusContainer: {
+      color: 'color-basic-500',
+      marginTop: 15,
+      borderTopWidth: 1,
+    }
   });
 
   const styles = useStyleSheet(themedStyles);
 
-
-  const FooterDeny = () => (
-    <View style={styles.container}>
-      <Button
-        style={styles.button}
-        size='small' status='danger'>
-        No Thanks.
-      </Button>
+  const Header = () => (
+    <View>
+      <View style={{flexDirection: 'row'}}>
+        <Text style={{ ...styles.headerText, paddingBottom: 0}}>🤒    ➡️</Text>
+        <Image style={{marginTop: 25, marginLeft: -12, width: 45, height: 15, alignSelf: 'center'}} source={require('../res/images/epfl.png')} />
+      </View>
+      <Text style={styles.headerText}>
+        <Text style={{fontWeight: 'bold'}}>{orgName}</Text> invites you to share your biological and digital samples
+        in order to participate in the study: <Text style={{fontWeight: 'bold'}}>{studyName}</Text>
+      </Text>
     </View>
   );
 
-  const Header = () => (
-    <Text style={styles.headerText}>
-      <Text style={{fontWeight: 'bold'}}>{orgName}</Text> invites you to share your biological and digital samples
-      in order to participate in the study: <Text style={{fontWeight: 'bold'}}>{studyName}</Text>
-    </Text>
-  )
+  const onDenyConsent = async () => {
+    setConsentActionState(true);
+    const connection = (agent as Agent).findConnectionByMyKey(verkey);
+    if (!connection) {
+      throw new Error(`connection with our verkey ${verkey} does not exist`);
+    }
+    await agent.context.messageSender.sendMessage(createOutboundMessage(
+      connection,
+      createConsentResponse(documentDarc, ConsentStatus.DENIED)
+    ));
+    setNotificationState(prevNotifications => [
+      ...prevNotifications.slice(0, index),
+      {
+        ...notificationState[index],
+        status: ConsentStatus.DENIED,
+      },
+      ...prevNotifications.slice(index+1, prevNotifications.length)
+    ]);
+  }
+
+  const onRevokeConsent = () => {
+    ToastAndroid.showWithGravity('TODO', ToastAndroid.SHORT, ToastAndroid.BOTTOM)
+  }
 
   const Footer = () => (
     <View>
@@ -174,11 +209,66 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
         identity.
       </Text>
       <Button
+        disabled={status !== ConsentStatus.UNDECIDED || consentActionState}
         style={styles.button}
+        onPress={onDenyConsent}
         size='small' status='danger'>
         NO THANKS
       </Button>
     </View>
+  );
+
+  const consentUndecided = (
+    <Card header={Header} footer={Footer}>
+      <View>
+        <Text style={styles.cardText}>
+          When you consent to share your data with {orgName}, your biological samples and data about you
+          will be securely released to them.
+          {"\n\n"}
+          You can revoke this consent at any time, and {orgName} will be notified and is required to destroy
+          data about you and samples from you.
+        </Text>
+        <Button
+          disabled={ status !== ConsentStatus.UNDECIDED || consentActionState }
+          style={styles.button}
+          size='small'
+          status='primary'
+          onPress={onGrantConsent}
+        >
+          I CONSENT
+        </Button>
+      </View>
+    </Card>
+  );
+
+  const consentGranted = (
+    <Card header={Header}>
+      <View>
+        <Text style={styles.cardText}>
+          You have granted consent for this study. You may revoke your consent
+          and prevent future use of your data and biological samples by pressing
+          the button below.
+        </Text>
+        <Button
+          style={styles.button}
+          size='small'
+          status='primary'
+          onPress={onRevokeConsent}
+        >
+          REVOKE CONSENT
+        </Button>
+      </View>
+    </Card>
+  );
+
+  const consentDenied = (
+    <Card header={Header}>
+      <View>
+        <Text style={styles.cardText}>
+          You have denied consent for this request.
+        </Text>
+      </View>
+    </Card>
   );
 
   return (
@@ -192,25 +282,9 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
         leftControl={renderBackAction()}
       />
       <View style={{margin: 10, flex: 1, justifyContent: 'center', alignContent: 'center'}}>
-        <Card header={Header} footer={Footer}>
-          <View>
-            <Text style={styles.cardText}>
-              When you consent to share your data with {orgName}, your biological samples and data about you
-              will be securely released to them.
-              {"\n\n"}
-              You can revoke this consent at any time, and {orgName} will be notified and is required to destroy
-              data about you and samples from you.
-            </Text>
-            <Button
-              style={styles.button}
-              size='small'
-              status='primary'
-              onPress={onGrantConsent}
-            >
-              I CONSENT
-            </Button>
-          </View>
-        </Card>
+        {status === ConsentStatus.UNDECIDED && consentUndecided}
+        {status === ConsentStatus.DENIED && consentDenied}
+        {status === ConsentStatus.GRANTED && consentGranted}
       </View>
     </Layout>
   )

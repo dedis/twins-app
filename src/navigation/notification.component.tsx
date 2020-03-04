@@ -4,20 +4,25 @@ import { LayoutItem } from '../model/layout-item.model';
 import { InboundMessage } from 'aries-framework-javascript/build/lib/types';
 import { Event } from 'aries-framework-javascript/build/lib/agent/events';
 import { Connection } from 'aries-framework-javascript';
-import { MessageType as ConsentMessageType } from '../agent/protocols/consent/messages';
+import { MessageType as ConsentMessageType, ConsentStatus } from '../agent/protocols/consent/messages';
 import { consentService } from '../App';
 
 interface Notification extends LayoutItem {
   route: string;
-  data: {}
+  documentDarc: string;
+  orgName: string;
+  studyName: string;
+  publicDid: string;
+  status: ConsentStatus;
+  verkey: Verkey
 }
 
 export const NotificationScreen = ({navigation, screenProps}) => {
   const [ notificationState, setNotificationState ] = React.useState<Notification[]>([]);
 
   const onItemPress = (index: number): void => {
-    const { route, data } = notificationState[index];
-    navigation.navigate(route, { data });
+    const { route } = notificationState[index];
+    navigation.navigate(route, { data: {index, notificationState, setNotificationState} });
   }
 
   const { agent } = screenProps;
@@ -31,15 +36,20 @@ export const NotificationScreen = ({navigation, screenProps}) => {
         if (consentService.verifyChallengeResponse(connection, message.message.nonce)) {
           console.log('Nonce verified');
           // @ts-ignore
-          const {documentDarc, comment, publicDid } = consentService.getDataForRequest(connection);
+          const {documentDarc, orgName, studyName, publicDid,  } = consentService.getDataForRequest(connection);
           const { verkey } = connection;
           setNotificationState(prevNotifications => [
             ...prevNotifications,
             {
               title: 'Consent Request',
-              description: comment,
+              description: `${orgName} would like to request your consent for their study on ${studyName}`,
               route: 'ConsentRequest',
-              data: { documentDarc, comment, publicDid, verkey },
+              documentDarc,
+              orgName,
+              studyName,
+              publicDid,
+              status: ConsentStatus.UNDECIDED,
+              verkey
             }
           ]);
         }

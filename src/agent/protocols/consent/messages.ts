@@ -8,6 +8,7 @@ export enum MessageType {
 }
 
 export enum ConsentStatus {
+  UNDECIDED,
   DENIED,
   GRANTED,
 }

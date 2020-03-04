@@ -19,8 +19,8 @@ export class ConsentService {
     outboundMessage.recipientKeys = ['Hs6eiUnGncbcNPiKrakDvTEWW1prRjQ4635QtcK3vt8x']
     if (connection.theirDid) {
       this.nonceMap[connection.theirDid] = req.nonce;
-      const { comment, publicDid, documentDarc } = message;
-      this.dataMap[connection.theirDid] = { comment, publicDid, documentDarc };
+      const { publicDid, documentDarc, orgName, studyName } = message;
+      this.dataMap[connection.theirDid] = { orgName, studyName, publicDid, documentDarc };
     }
     return outboundMessage;
   }
