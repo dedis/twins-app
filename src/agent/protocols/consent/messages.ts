@@ -11,6 +11,7 @@ export enum ConsentStatus {
   UNDECIDED,
   DENIED,
   GRANTED,
+  REVOKED,
 }
 
 export function createConsentChallengeRequest() {
