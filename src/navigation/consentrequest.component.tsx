@@ -20,6 +20,7 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
 
   const { agent } = screenProps;
   const { documentDarc, publicDid, orgName, studyName, verkey } = navigation.getParam('data');
+  // const [ documentDarc, publicDid, orgName, studyName, verkey ] = ['', '', 'DEDIS Pharma', 'amphotericin in-vitro trial', '13123123132'];
 
   const renderBackAction = (): React.ReactElement => {
     return <TopNavigationAction
@@ -91,7 +92,7 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
           tthis.conn.invalidate(tthis.conn.getURL());
           continue;
         } else {
-          Log.warn("Would need a RosterWSConnection to continue");
+          console.warn("Would need a RosterWSConnection to continue");
           break;
         }
       }
@@ -128,19 +129,25 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
     return blocks.pop() as SkipBlock;
   }
 
-  const styles = StyleSheet.create({
+  const themedStyles = StyleService.create({
     container: {
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
+      flex: 1,
     },
     button: {
-      width: 150,
-      marginHorizontal: 4,
     },
-    card: {
-      backgroundColor: 'rgba(255,255,255,255)'
-    }
+    cardText: {
+      paddingBottom: 10,
+      marginBottom: 10,
+      color: 'color-basic-500'
+    },
+    headerText: {
+      padding: 25,
+      color: 'color-basic-500'
+    },
   });
+
+  const styles = useStyleSheet(themedStyles);
+
 
   const FooterDeny = () => (
     <View style={styles.container}>
@@ -151,15 +158,25 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
       </Button>
     </View>
   );
-  const FooterGrant = () => (
-    <View style={styles.container}>
+
+  const Header = () => (
+    <Text style={styles.headerText}>
+      <Text style={{fontWeight: 'bold'}}>{orgName}</Text> invites you to share your biological and digital samples
+      in order to participate in the study: <Text style={{fontWeight: 'bold'}}>{studyName}</Text>
+    </Text>
+  )
+
+  const Footer = () => (
+    <View>
+      <Text style={styles.cardText}>
+        If you do not consent, no information will be shared about you. {orgName} will know
+        that some patients have declined to share their data, but will not know your
+        identity.
+      </Text>
       <Button
         style={styles.button}
-        size='small'
-        status='primary'
-        onPress={onGrantConsent}
-      >
-        I consent.
+        size='small' status='danger'>
+        NO THANKS
       </Button>
     </View>
   );
@@ -174,28 +191,25 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
         title='Consent Request'
         leftControl={renderBackAction()}
       />
-      <View style={{margin: 10}}>
-        <Card style={styles.card}>
-          <Text>
-           <Text style={{fontWeight: 'bold'}}>{orgName}</Text> invites you to share your biological and digital samples
-            in order to participate in the study: <Text style={{fontWeight: 'bold'}}>{studyName}</Text>.
-          </Text>
-        </Card>
-        <Card style={styles.card} footer={FooterGrant}>
-          <Text>
-            When you consent to share your data with {orgName}, your biological samples and data about you
-            will be securely released to them.
-            {"\n\n"}
-            You can revoke this consent at any time, and {orgName} will be notified and is required to destroy
-            data about you and samples from you.
-          </Text>
-        </Card>
-        <Card style={styles.card} footer={FooterDeny}>
-          <Text>
-            If you do not consent, no information will be shared about you. {orgName} will know
-            that some patients have declined to share their data, but will not know your
-            identity.
-          </Text>
+      <View style={{margin: 10, flex: 1, justifyContent: 'center', alignContent: 'center'}}>
+        <Card header={Header} footer={Footer}>
+          <View>
+            <Text style={styles.cardText}>
+              When you consent to share your data with {orgName}, your biological samples and data about you
+              will be securely released to them.
+              {"\n\n"}
+              You can revoke this consent at any time, and {orgName} will be notified and is required to destroy
+              data about you and samples from you.
+            </Text>
+            <Button
+              style={styles.button}
+              size='small'
+              status='primary'
+              onPress={onGrantConsent}
+            >
+              I CONSENT
+            </Button>
+          </View>
         </Card>
       </View>
     </Layout>
