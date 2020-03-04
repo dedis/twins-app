@@ -13,13 +13,13 @@ import { createConsentResponse, ConsentStatus } from '../agent/protocols/consent
 import { SkipchainRPC, SkipBlock } from '@dedis/cothority/skipchain';
 import { GetUpdateChain, GetUpdateChainReply } from '@dedis/cothority/skipchain/proto';
 import { RosterWSConnection } from '@dedis/cothority/network/connection';
-import { bcID, signerID } from '../App';
+import { bcID, signerID } from '../config';
 
 export const ConsentRequestScreen = ({ navigation, screenProps }) => {
   const safeArea = useSafeArea();
 
-  const { agent } = screenProps;
-  const { index, notificationState, setNotificationState } = navigation.getParam('data');
+  const { agent, notificationState, setNotificationState } = screenProps;
+  const { index } = navigation.getParam('data');
   const { documentDarc, publicDid, orgName, studyName, verkey, status } = notificationState[index];
 
   const [ consentActionState, setConsentActionState ] = React.useState<boolean>(false);
@@ -77,7 +77,7 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
       setNotificationState(prevNotifications => [
         ...prevNotifications.slice(0, index),
         {
-          ...notificationState[index],
+          ...prevNotifications[index],
           status: ConsentStatus.GRANTED
         },
         ...prevNotifications.slice(index+1, prevNotifications.length)
@@ -190,7 +190,7 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
     setNotificationState(prevNotifications => [
       ...prevNotifications.slice(0, index),
       {
-        ...notificationState[index],
+        ...prevNotifications[index],
         status: ConsentStatus.DENIED,
       },
       ...prevNotifications.slice(index+1, prevNotifications.length)

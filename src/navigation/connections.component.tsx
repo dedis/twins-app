@@ -7,40 +7,21 @@ import { Agent, Connection } from 'aries-framework-javascript';
 import { LayoutItem } from 'src/model/layout-item.model';
 import { Event } from 'aries-framework-javascript/build/lib/agent/events';
 
-interface Connections extends LayoutItem {
+export interface Connections extends LayoutItem {
   route: string;
-  connection: Connection
+  connection: Connection,
+  did: string,
 }
 
 export const ConnectionsScreen = ({ navigation, screenProps }): LayoutListElement => {
 
-  const agent: Agent = screenProps.agent;
+  const { connectionState } =  screenProps;
+
 
   const onItemPress = (index: number): void => {
     const { route, connection } = connectionState[index];
     navigation.navigate(route, { connection });
   }
-
-  const [ connectionState, setConnectionState ] = React.useState<Connections[]>([]);
-
-  useEffect(() => {
-    console.log('Waiting for connections...');
-    agent.context.eventEmitter.on(Event.CONNECTION_ESTABLISHED, (connection: Connection) => {
-      console.log('In here, connection got added');
-      console.log(connection);
-      if (connection.theirDidDoc && connection.theirDidDoc.id) {
-        setConnectionState(prevConnections => [
-          ...prevConnections,
-          {
-            title: connection.didDoc.id,
-            description: '',
-            route: 'Chat',
-            connection
-          }
-        ]);
-      }
-    });
-  }, []);
 
   return (
     <LayoutList

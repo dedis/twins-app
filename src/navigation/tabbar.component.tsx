@@ -30,7 +30,7 @@ export const TabBarComponent = ({ navigation }) => {
             <BottomNavigation selectedIndex={navigation.state.index} onSelect={onSelect}>
                 <BottomNavigationTab title='Home' icon={HomeIcon} titleStyle={titleStyle} />
                 <BottomNavigationTab title='Connections' icon={ConnectionsIcon} titleStyle={titleStyle} />
-                <BottomNavigationTab title='Notifications' icon={NotificationsIcon} titleStyle={titleStyle} />
+                <BottomNavigationTab title='Requests' icon={NotificationsIcon} titleStyle={titleStyle} />
             </BottomNavigation>
         </SafeAreaView>
     )

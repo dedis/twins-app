@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { Image } from 'react-native';
 import { Button, Layout, Spinner } from '@ui-kitten/components';
 import QRCode from 'react-native-qrcode-svg';
-import {default as appTheme} from '../custom-theme.json';
+import {myTheme as appTheme} from '../custom-theme';
 import RNFS from 'react-native-fs';
 import images from '../res/images';
+import { Connection } from 'aries-framework-javascript';
+import { Event } from 'aries-framework-javascript/build/lib/agent/events';
+import { InboundMessage } from 'aries-framework-javascript/build/lib/types';
+import { MessageType as ConsentMessageType, ConsentStatus } from '../agent/protocols/consent/messages';
+import { consentService } from '../config';
 
 enum AgentState {
   UNPROVISIONED,
@@ -20,7 +25,76 @@ export const HomeScreen = ({ navigation, screenProps }) => {
   const [ provisionState, setAgentState ] = React.useState<AgentState>(AgentState.UNPROVISIONED);
   const [ inviteUrl, setInviteUrl ] = React.useState<string>('');
 
-  const { agent } = screenProps;
+  const { agent, listenerState, setListenerState, setConnectionState, setNotificationState } = screenProps;
+
+  useEffect(() => {
+    console.log(`Listener State: ${listenerState}`);
+    if (listenerState) {
+      return;
+    }
+    console.log('Registered event listeners');
+    agent.context.eventEmitter.on(Event.CONNECTION_ESTABLISHED, (connection: Connection) => {
+      if (connection.theirDidDoc && connection.theirDidDoc.id) {
+        setConnectionState(prevConnections => [
+          ...prevConnections,
+          {
+            title: '',
+            description: '',
+            route: 'Chat',
+            connection,
+            // @ts-ignore
+            did: connection.theirDidDoc.id,
+          }
+        ]);
+      }
+    });
+
+    agent.context.eventEmitter.on(Event.MESSAGE_RECEIVED, (message: InboundMessage) => {
+      if (message.message['@type'] && message.message['@type'] == ConsentMessageType.ConsentChallengeResponse) {
+        // TODO: Move this to handler
+        const connection = agent.findConnectionByTheirKey(message.sender_verkey);
+        if (!connection) {
+          return;
+        }
+        if (consentService.verifyChallengeResponse(connection, message.message.nonce)) {
+          console.log('Nonce verified');
+          // @ts-ignore
+          const { documentDarc, orgName, studyName, publicDid, } = consentService.getDataForRequest(connection);
+          const { verkey } = connection;
+          setNotificationState(prevNotifications => [
+            ...prevNotifications,
+            {
+              title: 'Consent Request',
+              description: `${orgName} would like to request your consent for their study on ${studyName}`,
+              route: 'ConsentRequest',
+              documentDarc,
+              orgName,
+              studyName,
+              publicDid,
+              status: ConsentStatus.UNDECIDED,
+              verkey
+            }
+          ]);
+          setConnectionState(prevConnections => {
+            // @ts-ignore
+            const idx = prevConnections.findIndex(c => c.did === connection.theirDidDoc.id);
+            console.log(`idx: ${idx}`);
+            const c = prevConnections[idx];
+            return [
+              ...prevConnections.slice(0, idx),
+              {
+                ...c,
+                description: `Peer DID: ${connection.theirDid} Public DID: ${publicDid}`,
+                title: orgName
+              },
+              ...prevConnections.slice(idx + 1),
+            ];
+          });
+        }
+      }
+    });
+    setListenerState(true);
+  }, [])
 
   const onProvisionPress = async () => {
     console.log('Provisioning...');
@@ -70,7 +144,7 @@ export const HomeScreen = ({ navigation, screenProps }) => {
     case AgentState.PROVISIONED:
       return (
         <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
-          <Image style={{flex: 6, width: '100%', resizeMode: 'stretch'}} source={images.bg}/>
+          <Image style={{ flex: 6, width: '100%', resizeMode: 'stretch' }} source={images.bg} />
           <Layout style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
             <Button onPress={onCreateInvite}>Create Invite</Button>
             <Button onPress={onScanInvite}>Scan Invite</Button>
