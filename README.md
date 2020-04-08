@@ -3,10 +3,12 @@
 ## Configuring
 
 Edit the following to configure the system:
-* src/App.tsx to set the mediator URL, which you get from ngrok
-* src/App.tsx to set the ByzcoinID, which you get from setting up Odyssey
+* src/config.ts to set the mediator URL, which you get from ngrok
+* src/config.ts to set the ByzcoinID, which you get from setting up Odyssey
+* src/config.ts to set the ed25519 signer secret for the document writer identity
 * src/roster.ts to set the roster, which you get from setting up Odyssey (from conode/public.toml, but be careful to
 modify the IP address from localhost to 10.0.2.2 to match what Android needs)
+
 
 ## Dependencies
 

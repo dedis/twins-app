@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-navigation';
 import { Image } from 'react-native';
 import { Button, Layout, Spinner } from '@ui-kitten/components';
 import QRCode from 'react-native-qrcode-svg';
-import {myTheme as appTheme} from '../custom-theme';
+import { myTheme } from '../custom-theme';
 import RNFS from 'react-native-fs';
 import images from '../res/images';
 import { Connection } from 'aries-framework-javascript';
@@ -155,7 +155,7 @@ export const HomeScreen = ({ navigation, screenProps }) => {
       return (
         <SafeAreaView style={{ flex: 1 }}>
           <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <QRCode color={appTheme['color-primary-500']} backgroundColor='white' value={inviteUrl} size={200} />
+            <QRCode color={myTheme['color-primary-500']} backgroundColor='white' value={inviteUrl} size={200} />
           </Layout>
         </SafeAreaView>
       )
