@@ -34,3 +34,17 @@ Each one needs a slightly different process to prepare it for use:
 In one window, run Metro: `yarn start`
 
 In another window, build the app and send it to your emulator: `yarn android`
+
+
+## Cleanup todo items
+
+These are things Jeff knows about and needs to come back to.
+
+* aries-framework-javascript: Run npm audit and update
+* update Indy sdk binaries
+* react autolink:
+```
+error React Native CLI uses autolinking for native dependencies, but the following modules are linked manually: 
+  - react-native-randombytes (to unlink run: "react-native unlink react-native-randombytes")
+This is likely happening when upgrading React Native from below 0.60 to 0.60 or above. Going forward, you can unlink this dependency via "react-native unlink <dependency>" and it will be included in your app automatically. If a library isn't compatible with autolinking, disregard this message and notify the library maintainers.
+```

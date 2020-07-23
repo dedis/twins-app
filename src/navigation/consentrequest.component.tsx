@@ -13,7 +13,7 @@ import { createConsentResponse, ConsentStatus } from '../agent/protocols/consent
 import { SkipchainRPC, SkipBlock } from '@dedis/cothority/skipchain';
 import { GetUpdateChain, GetUpdateChainReply } from '@dedis/cothority/skipchain/proto';
 import { RosterWSConnection } from '@dedis/cothority/network/connection';
-import { bcID, signerID } from '../config';
+import { bcID, signerPrivateKey } from '../config';
 
 export const ConsentRequestScreen = ({ navigation, screenProps }) => {
   const safeArea = useSafeArea();
@@ -60,7 +60,7 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
       const identity = new IdentityDid(identityProps);
       // await identity.init(); // no need to init
       newDarc.rules.appendToRule('spawn:calypsoRead', identity, Rule.OR);
-      const signer = SignerEd25519.fromBytes(Buffer.from(signerID, 'hex'));
+      const signer = SignerEd25519.fromBytes(Buffer.from(signerPrivateKey, 'hex'));
       console.log('created signer');
       await darc.evolveDarcAndWait(newDarc, [signer], 100);
       console.log(`Evolved darc and added ${publicDid} to spawn:calypsoRead rule`);
