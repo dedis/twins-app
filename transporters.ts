@@ -7,6 +7,7 @@ import { OutboundPackage } from "aries-framework-javascript/build/lib/types";
 
 export class RealTimeInboundTransporter implements InboundTransporter {
   _signalRClient?: SignalRClient
+  state: number = 0;
 
   async start(agent: Agent) {
     // TODO: add check if connection is already established with agency
@@ -49,6 +50,15 @@ export class RealTimeInboundTransporter implements InboundTransporter {
 
   close() {
     return this._signalRClient?.close();
+  }
+
+  toggle() {
+    if (this.state == 0) {
+      this._signalRClient?.connection?.stop();
+    } else {
+      this._signalRClient?.connection?.start();
+    }
+    this.state ^= 1;
   }
 }
 

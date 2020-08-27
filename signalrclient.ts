@@ -1,6 +1,7 @@
 import { Agent, Connection } from "aries-framework-javascript";
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { createOutboundMessage } from "aries-framework-javascript/build/lib/protocols/helpers";
+import async from 'async';
 
 export class SignalRClient {
     agent: Agent

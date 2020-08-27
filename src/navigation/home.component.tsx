@@ -38,7 +38,7 @@ export const HomeScreen = ({ navigation, screenProps }) => {
         setConnectionState(prevConnections => [
           ...prevConnections,
           {
-            title: '',
+            title: connection.theirDid,
             description: '',
             route: 'Chat',
             connection,
@@ -144,7 +144,6 @@ export const HomeScreen = ({ navigation, screenProps }) => {
     case AgentState.PROVISIONED:
       return (
         <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
-          <Image style={{ flex: 6, width: '100%', resizeMode: 'stretch' }} source={images.bg} />
           <Layout style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
             <Button onPress={onCreateInvite}>Create Invite</Button>
             <Button onPress={onScanInvite}>Scan Invite</Button>

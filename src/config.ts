@@ -1,7 +1,7 @@
 import {ConsentService} from './agent/protocols/consent/ConsentService';
 
 // ### Insert mediator URL here ###
-export const mediatorURL = 'http://38851d89.ngrok.io';
+export const mediatorURL = 'http://4a394091.ngrok.io';
 // ### Insert your Byzcoin ID here ###
 export const bcID =
   '310ccffa343718ae4a29164bb74e8b8dee59fae302a3b5a131ff37bee8ca6224';

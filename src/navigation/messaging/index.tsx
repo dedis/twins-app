@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
 import { Layout, TopNavigation, useStyleSheet, Button, StyleService, TopNavigationAction, Icon, Input, IconElement } from '@ui-kitten/components'
 import { useSafeArea } from 'react-native-safe-area-context';
-import { ImageStyle, Keyboard, Platform } from 'react-native';
+import { ImageStyle, Keyboard, Platform, Image } from 'react-native';
 import { KeyboardAvoidingView } from './keyboard-avoiding-view.component';
 import { Message } from './chat-message.component';
 import { Chat } from './chat.component';
 import { Connection, Agent } from 'aries-framework-javascript';
 import { InboundMessage } from 'aries-framework-javascript/build/lib/types';
+import { RealTimeInboundTransporter } from 'transporters';
 
 const themedStyles = StyleService.create({
   container: {
@@ -71,6 +72,22 @@ export default ({ navigation, screenProps }) => {
     />
   };
 
+  const ToggleIcon = (style: ImageStyle): IconElement => (
+    <Icon {...style} name='alert-circle-outline' />
+  )
+
+  const toggleConnectionButton = (): React.ReactElement => {
+    return <TopNavigationAction
+      icon={ToggleIcon}
+      onPress={toggleConnection}
+      />
+  }
+
+  const toggleConnection = (): void => {
+    const inboundTransport = agent.inboundTransporter as RealTimeInboundTransporter;
+    inboundTransport.toggle();
+  }
+
   const agent: Agent = screenProps.agent;
   const connection: Connection = navigation.getParam('connection');
 
@@ -110,6 +127,7 @@ export default ({ navigation, screenProps }) => {
         alignment='center'
         title='Connection Name'
         leftControl={renderBackAction()}
+        rightControls={toggleConnectionButton()}
       />
       <Chat
         style={styles.chat}
