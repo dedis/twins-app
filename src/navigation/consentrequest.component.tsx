@@ -2,7 +2,7 @@ import React from 'react';
 import { Layout, TopNavigation, useStyleSheet, StyleService, TopNavigationAction, IconElement, Icon, Card, Button } from '@ui-kitten/components'
 import { useSafeArea } from 'react-native-safe-area-context';
 import { ImageStyle, View, Text, Image, StyleSheet, ToastAndroid } from 'react-native';
-import rosterData from '../roster';
+import rosterData from '../app/roster';
 import DarcInstance from '@dedis/cothority/byzcoin/contracts/darc-instance';
 import { Rule, SignerEd25519, IdentityDid } from '@dedis/cothority/darc';
 import { Roster } from '@dedis/cothority/network/proto';
@@ -13,7 +13,7 @@ import { createConsentResponse, ConsentStatus } from '../agent/protocols/consent
 import { SkipchainRPC, SkipBlock } from '@dedis/cothority/skipchain';
 import { GetUpdateChain, GetUpdateChainReply } from '@dedis/cothority/skipchain/proto';
 import { RosterWSConnection } from '@dedis/cothority/network/connection';
-import { bcID, signerID } from '../config';
+import { bcID, signerID } from '../app/config';
 
 export const ConsentRequestScreen = ({ navigation, screenProps }) => {
   const safeArea = useSafeArea();

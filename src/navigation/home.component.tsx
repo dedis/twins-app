@@ -3,14 +3,14 @@ import { SafeAreaView } from 'react-navigation';
 import { Image } from 'react-native';
 import { Button, Layout, Spinner } from '@ui-kitten/components';
 import QRCode from 'react-native-qrcode-svg';
-import { myTheme } from '../custom-theme';
+import { myTheme } from '../app/custom-theme';
 import RNFS from 'react-native-fs';
 import images from '../res/images';
 import { Connection } from 'aries-framework-javascript';
 import { Event } from 'aries-framework-javascript/build/lib/agent/events';
 import { InboundMessage } from 'aries-framework-javascript/build/lib/types';
 import { MessageType as ConsentMessageType, ConsentStatus } from '../agent/protocols/consent/messages';
-import { consentService } from '../config';
+import { consentService } from '../app/config';
 
 enum AgentState {
   UNPROVISIONED,

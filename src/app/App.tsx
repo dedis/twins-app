@@ -3,24 +3,24 @@ import React from 'react';
 import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import { mapping, dark } from '@eva-design/eva';
-import {AppNavigator} from './navigation/navigation.component';
+import {AppNavigator} from '../navigation/navigation.component';
 import { myTheme } from './custom-theme';
 import {
   RealTimeInboundTransporter,
   HTTPOutboundTransporter,
-} from '../transporters';
+} from '../../transporters';
 import { InitConfig } from 'aries-framework-javascript/build/lib/types';
 import {Agent} from 'aries-framework-javascript';
 import RNFS from 'react-native-fs';
 // @ts-ignore
 import indy from 'rn-indy-sdk';
 import debug from 'debug';
-import { ConsentRequestHandler } from './agent/handlers/consent/ConsentRequestHandler';
-import { ConsentService } from './agent/protocols/consent/ConsentService';
-import { ConsentChallengeResponseHandler } from './agent/handlers/consent/ConsentChallengeResponseHandler';
-import { Connections } from './navigation/connections.component';
-import { MessageType as ConsentMessageType } from './agent/protocols/consent/messages';
-import { Notification } from './navigation/notification.component';
+import { ConsentRequestHandler } from '../agent/handlers/consent/ConsentRequestHandler';
+import { ConsentService } from '../agent/protocols/consent/ConsentService';
+import { ConsentChallengeResponseHandler } from '../agent/handlers/consent/ConsentChallengeResponseHandler';
+import { Connections } from '../navigation/connections.component';
+import { MessageType as ConsentMessageType } from '../agent/protocols/consent/messages';
+import { Notification } from '../navigation/notification.component';
 import { mediatorURL, consentService } from './config';
 
 debug.enable('aries-framework-javascript');

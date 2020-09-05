@@ -1,4 +1,4 @@
-import {ConsentService} from './agent/protocols/consent/ConsentService';
+import {ConsentService} from '../agent/protocols/consent/ConsentService';
 
 // ### Insert mediator URL here ###
 export const mediatorURL = 'http://4a394091.ngrok.io';
