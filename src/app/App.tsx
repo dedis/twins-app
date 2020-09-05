@@ -1,5 +1,6 @@
 global.Buffer = global.Buffer || require('buffer').Buffer;
 import React from 'react';
+import { Provider } from 'react-redux'
 import agent from '../agent/agent';
 import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
@@ -8,6 +9,8 @@ import {AppNavigator} from '../navigation/navigation.component';
 import { myTheme } from './custom-theme';
 import { Connections } from '../navigation/connections.component';
 import { Notification } from '../navigation/notification.component';
+
+import store from './store'
 
 
 const App = () => {
@@ -22,7 +25,9 @@ const App = () => {
     <React.Fragment>
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider mapping={mapping} theme={theme}>
-        <AppNavigator screenProps={{ agent, connectionState, setConnectionState, notificationState, setNotificationState, listenerState, setListenerState }} />
+        <Provider store={store}>
+          <AppNavigator screenProps={{ agent, connectionState, setConnectionState, notificationState, setNotificationState, listenerState, setListenerState }} />
+        </Provider>
       </ApplicationProvider>
     </React.Fragment>
   );
