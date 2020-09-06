@@ -1,62 +1,28 @@
 import { InboundTransporter, Agent, OutboundTransporter } from "aries-framework-javascript";
-import { SignalRClient } from "./signalrclient";
-import { createOutboundMessage } from "aries-framework-javascript/build/lib/protocols/helpers";
-import { createTrustPingMessage } from "aries-framework-javascript/build/lib/protocols/trustping/messages";
-import { createCreateInboxMessage } from "aries-framework-javascript/build/lib/protocols/routing/messages";
 import { OutboundPackage } from "aries-framework-javascript/build/lib/types";
+import { EdgeAgent } from "../agent";
+import logger from "aries-framework-javascript/build/lib/logger"
 
 export class RealTimeInboundTransporter implements InboundTransporter {
-  _signalRClient?: SignalRClient
   state: number = 0;
+  agent!: EdgeAgent;
 
-  async start(agent: Agent) {
+  async start(agent: EdgeAgent) {
     // TODO: add check if connection is already established with agency
     // after we add support for persisting connections
-    const agencyConnection = await this.establishConnectionWithAgency(agent);
-    this._signalRClient = new SignalRClient(agent, agencyConnection);
-    await this._signalRClient.init();
+    this.agent = agent;
+    logger.log('Gonna provision routing module');
+    await agent.signalRRoutingModule.provision();
+    logger.log('initializing signalRClient');
+    await agent.signalRClientModule.init();
   }
 
-  async establishConnectionWithAgency(agent: Agent) {
-    const inviteUrl = `${agent.getAgencyUrl()}/.well-known/agent-configuration`;
-    const invitationMessage = await (await fetch(inviteUrl)).json();
-    const connectionRequest = await agent.connectionService.acceptInvitation(invitationMessage.Invitation);
-    const { connection } = connectionRequest;
-    console.log('Received invitation, sending connectionRequest');
-    const connectionResponsePacked = await agent.context.messageSender.sendMessageAndGetReply(connectionRequest);
-    console.log('Received', connectionResponsePacked);
-    const connectionResponse = await agent.context.wallet.unpack(connectionResponsePacked);
-    console.log('Connection response', connectionResponse);
-    await agent.connectionService.acceptResponse(connectionResponse);
-
-    // Disable routing keys since messages will always be exchanged directly
-    // We aren't using the trust ping message created above because it wraps the
-    // message in a forward envelope.
-    if (connection.theirDidDoc) {
-      connection.theirDidDoc.service[0].routingKeys = [];
-    }
-    const trustPingMessage = createOutboundMessage(connection, createTrustPingMessage());
-    await agent.context.messageSender.sendMessageAndGetReply(trustPingMessage);
-
-    await connection.isConnected();
-
-    const cInboxMessage = createOutboundMessage(connection, createCreateInboxMessage());
-    await agent.context.messageSender.sendMessageAndGetReply(cInboxMessage);
-
-    agent.establishInbound(invitationMessage.RoutingKey, connection);
-
-    return connection;
-  }
-
-  close() {
-    return this._signalRClient?.close();
-  }
 
   toggle() {
     if (this.state == 0) {
-      this._signalRClient?.connection?.stop();
+      this.agent.signalRClientModule.connection?.stop();
     } else {
-      this._signalRClient?.connection?.start();
+      this.agent.signalRClientModule.connection?.start();
     }
     this.state ^= 1;
   }

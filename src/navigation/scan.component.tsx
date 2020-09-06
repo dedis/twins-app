@@ -3,6 +3,7 @@ import { Layout, TopNavigation, useStyleSheet, StyleService, TopNavigationAction
 import { useSafeArea } from 'react-native-safe-area-context';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { ImageStyle } from 'react-native';
+import { Agent } from 'aries-framework-javascript';
 
 export const ScanScreen = ({ navigation, screenProps }) => {
   const themedStyles = StyleService.create({
@@ -29,7 +30,7 @@ export const ScanScreen = ({ navigation, screenProps }) => {
 
   const onRead = async (e: any) => {
     console.log('Accepting invitation...');
-    await agent.acceptInvitationUrl(e.data);
+    await (agent as Agent).didexchange.acceptInvite(e.data);
     console.log('Done');
     navigation.navigate('Connections');
   }

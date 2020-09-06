@@ -4,7 +4,7 @@ import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { HomeScreen } from './home.component';
 import { ScanScreen } from './scan.component';
-import { ConnectionsScreen } from './connections.component';
+import { ConnectionsScreen } from './connections/connections.component';
 import { TabBarComponent } from './tabbar.component';
 import messaging from './messaging';
 import { NotificationScreen } from './notification.component';

@@ -1,32 +1,41 @@
 global.Buffer = global.Buffer || require('buffer').Buffer;
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux'
-import agent from '../agent/agent';
+import agentModule from '../agent/agent';
 import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import { mapping, dark } from '@eva-design/eva';
 import {AppNavigator} from '../navigation/navigation.component';
 import { myTheme } from './custom-theme';
-import { Connections } from '../navigation/connections.component';
 import { Notification } from '../navigation/notification.component';
+import {setJSExceptionHandler } from 'react-native-exception-handler';
 
 import store from './store'
 
+setJSExceptionHandler(async (error, isFatal) => {
+  await agentModule.getAgent().closeAndDeleteWallet();
+  throw error;
+}, true);
 
 const App = () => {
-
-  const [connectionState, setConnectionState] = React.useState<Connections[]>([]);
   const [notificationState, setNotificationState] = React.useState<Notification[]>([]);
-  const [listenerState, setListenerState] = React.useState<boolean>(false);
 
   const theme = { ...dark, ...myTheme };
+
+  const agent = agentModule.getAgent();
+
+  useEffect(() => {
+    return () => {
+      agent.destroyEventHandlers();
+    }
+  })
 
   return (
     <React.Fragment>
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider mapping={mapping} theme={theme}>
         <Provider store={store}>
-          <AppNavigator screenProps={{ agent, connectionState, setConnectionState, notificationState, setNotificationState, listenerState, setListenerState }} />
+          <AppNavigator screenProps={{ agent, notificationState, setNotificationState }} />
         </Provider>
       </ApplicationProvider>
     </React.Fragment>

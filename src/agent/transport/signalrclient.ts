@@ -1,14 +1,17 @@
-import { Agent, Connection } from "aries-framework-javascript";
+import { Connection, Agent } from "aries-framework-javascript";
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { createOutboundMessage } from "aries-framework-javascript/build/lib/protocols/helpers";
 import async from 'async';
+import { EdgeAgent } from "../agent";
+import { AgentMessage } from "aries-framework-javascript/build/lib/agent/AgentMessage";
+import { IsString } from "class-validator";
 
 export class SignalRClient {
-    agent: Agent
+    agent: EdgeAgent
     agencyConnection: Connection
     connection?: HubConnection
 
-    constructor(agent: Agent, agencyConnection: Connection) {
+    constructor(agent: EdgeAgent, agencyConnection: Connection) {
         this.agent = agent;
         this.agencyConnection = agencyConnection;
         this.connection = new HubConnectionBuilder()
@@ -32,13 +35,9 @@ export class SignalRClient {
 
     registerHandlers() {
         this.connection?.on('Authorize', async (nonce: string) => {
-            const response = {
-                '@type': 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/authorize/1.0/authorize_response',
-                '@id': '123123123',
-                nonce,
-            }
+            const response = new ResponseMessage({ nonce });
             const outboundMessage = createOutboundMessage(this.agencyConnection, response);
-            const packedMessage = await this.agent.context.messageSender.packMessage(outboundMessage);
+            const packedMessage = await this.agent.packMessage(outboundMessage);
             console.log(`packedMessage: ${packedMessage}`);
             await this.connection?.invoke('AuthorizeResponse', JSON.stringify(packedMessage.payload));
         });

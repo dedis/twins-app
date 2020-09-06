@@ -5,12 +5,7 @@ import { Button, Layout, Spinner } from '@ui-kitten/components';
 import QRCode from 'react-native-qrcode-svg';
 import { myTheme } from '../app/custom-theme';
 import RNFS from 'react-native-fs';
-import images from '../res/images';
-import { Connection } from 'aries-framework-javascript';
-import { Event } from 'aries-framework-javascript/build/lib/agent/events';
-import { InboundMessage } from 'aries-framework-javascript/build/lib/types';
-import { MessageType as ConsentMessageType, ConsentStatus } from '../agent/protocols/consent/messages';
-import { consentService } from '../app/config';
+import { EdgeAgent } from 'src/agent/agent';
 
 enum AgentState {
   UNPROVISIONED,
@@ -25,30 +20,10 @@ export const HomeScreen = ({ navigation, screenProps }) => {
   const [ provisionState, setAgentState ] = React.useState<AgentState>(AgentState.UNPROVISIONED);
   const [ inviteUrl, setInviteUrl ] = React.useState<string>('');
 
-  const { agent, listenerState, setListenerState, setConnectionState, setNotificationState } = screenProps;
+  const { agent } = screenProps;
 
+  /*
   useEffect(() => {
-    console.log(`Listener State: ${listenerState}`);
-    if (listenerState) {
-      return;
-    }
-    console.log('Registered event listeners');
-    agent.context.eventEmitter.on(Event.CONNECTION_ESTABLISHED, (connection: Connection) => {
-      if (connection.theirDidDoc && connection.theirDidDoc.id) {
-        setConnectionState(prevConnections => [
-          ...prevConnections,
-          {
-            title: connection.theirDid,
-            description: '',
-            route: 'Chat',
-            connection,
-            // @ts-ignore
-            did: connection.theirDidDoc.id,
-          }
-        ]);
-      }
-    });
-
     agent.context.eventEmitter.on(Event.MESSAGE_RECEIVED, (message: InboundMessage) => {
       if (message.message['@type'] && message.message['@type'] == ConsentMessageType.ConsentChallengeResponse) {
         // TODO: Move this to handler
@@ -95,6 +70,7 @@ export const HomeScreen = ({ navigation, screenProps }) => {
     });
     setListenerState(true);
   }, [])
+  */
 
   const onProvisionPress = async () => {
     console.log('Provisioning...');

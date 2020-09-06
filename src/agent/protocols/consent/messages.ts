@@ -1,4 +1,6 @@
 import uuid from 'uuid/v4';
+import { Equals, IsString } from 'class-validator';
+import { AgentMessage } from 'aries-framework-javascript/build/lib/agent/AgentMessage';
 
 export enum MessageType {
   ConsentRequest = 'https://dedis.epfl.ch/consent/1.0/consent-request',
@@ -29,4 +31,26 @@ export function createConsentResponse(documentDarc: string, status: ConsentStatu
     documentDarc,
     status,
   }
+}
+
+export class ConsentRequestMessage extends AgentMessage {
+  public constructor(options: { nonce: string }) {
+    super();
+    this.nonce = options.nonce;
+  }
+
+  public readonly type = ConsentRequestMessage.type;
+  public static readonly type = MessageType.ConsentRequest;
+
+  @IsString()
+  public nonce: string
+}
+
+export class ConsentChallengeResponse extends AgentMessage {
+  public constructor() {
+    super();
+  }
+
+  public readonly type = ConsentChallengeResponse.type;
+  public static readonly type = MessageType.ConsentChallengeResponse;
 }

@@ -1,9 +1,9 @@
-import { InboundMessage } from 'aries-framework-javascript/build/lib/types';
-import { ConsentService } from '../../protocols/consent/ConsentService';
-import { ConnectionService } from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionService';
+import { ConsentChallengeResponse } from '../../protocols/consent/messages';
+import { Handler, HandlerInboundMessage } from 'aries-framework-javascript/build/lib/handlers/Handler';
 
 export class ConsentChallengeResponseHandler {
-  async handle(inboundMessage: InboundMessage) {
-      return null;
+  public supportedMessages = [ConsentChallengeResponse]
+  async handle(inboundMessage: HandlerInboundMessage<ConsentChallengeResponseHandler>) {
+    return
   }
 }
