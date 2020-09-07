@@ -7,6 +7,10 @@ import { myTheme } from '../app/custom-theme';
 import RNFS from 'react-native-fs';
 import { EdgeAgent } from 'src/agent/agent';
 import { genesis_txn } from 'src/app/config';
+import { Agent } from 'aries-framework-javascript';
+import { useDispatch } from 'react-redux';
+import { addConnections } from 'src/navigation/connections/connectionsSlice'
+import { ConnectionState } from 'aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
 
 enum AgentState {
   UNPROVISIONED,
@@ -17,7 +21,7 @@ enum AgentState {
 }
 
 export const HomeScreen = ({ navigation, screenProps }) => {
-
+  const dispatch = useDispatch();
   const [ provisionState, setAgentState ] = React.useState<AgentState>(AgentState.UNPROVISIONED);
   const [ inviteUrl, setInviteUrl ] = React.useState<string>('');
 
@@ -77,6 +81,7 @@ export const HomeScreen = ({ navigation, screenProps }) => {
     console.log('Provisioning...');
     setAgentState(AgentState.PROVISIONING);
     // TODO: Why does agent.init() not just open the existing wallet?
+    /*
     RNFS.unlink(RNFS.DocumentDirectoryPath + '/.indy_wallet')
       .then(() => {
         console.log("Old wallet nuked.")
@@ -84,6 +89,7 @@ export const HomeScreen = ({ navigation, screenProps }) => {
       .catch((err: Error) => {
         console.log('Ignored error from wallet cleanup: ', err.message);
       })
+    */
     await agent.init();
     const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
       title: 'Store the genesis file',
@@ -93,10 +99,20 @@ export const HomeScreen = ({ navigation, screenProps }) => {
     });
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
       const path = `${RNFS.ExternalStorageDirectoryPath}/genesis.txn`;
-      RNFS.writeFile(path, genesis_txn)
+      RNFS.writeFile(path, genesis_txn);
       console.log('Genesis txn file at ', path);
-      await (agent as EdgeAgent).ledger.connect('buildernet', { genesis_txn: path })
-      setAgentState(AgentState.PROVISIONED)
+      await (agent as EdgeAgent).ledger.connect('buildernet', { genesis_txn: path });
+
+      // Inflate the connections state
+      const connections = await (agent as EdgeAgent).didexchange.getAll();
+      const items = connections.filter(connection => connection.state === ConnectionState.COMPLETE).map(connection => ({
+        title: connection.invitation?.label!,
+        description: `Connected using identifier: ${connection.did}`,
+       }));
+      dispatch(addConnections(items));
+      setAgentState(AgentState.PROVISIONED);
+    } else {
+      setAgentState(AgentState.UNPROVISIONED);
     }
   };
 

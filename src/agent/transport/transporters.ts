@@ -15,7 +15,11 @@ export class RealTimeInboundTransporter implements InboundTransporter {
     logger.log('Gonna provision routing module');
     await agent.signalRRoutingModule.provision();
     logger.log('initializing signalRClient');
-    await agent.signalRClientModule.init();
+    try {
+      await agent.signalRClientModule.init();
+    } catch(err) {
+      logger.log('Error initializing signalR connection', err);
+    }
   }
 
 

@@ -20,6 +20,7 @@ import { CustomConsumerRoutingService } from './protocols/routing/ConsumerRoutin
 import logger from "aries-framework-javascript/build/lib/logger"
 import { ConnectionState } from 'aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
 import store from 'src/app/store';
+import { ConsentInvitationHandler } from './handlers/consent/ConsentInvitationHandler';
 
 debug.enable('aries-framework-javascript');
 
@@ -44,6 +45,7 @@ export class EdgeAgent extends Agent {
     // We have our own implementation of ConsumerRoutingService
     this.consumerRoutingService = new CustomConsumerRoutingService(this.messageSender, this.agentConfig);
     this.didexchangeService = new ExchangeService(this.wallet, this.agentConfig, this.connectionRepository, this.ledgerService, this.consumerRoutingService);
+    this.consentService = new ConsentService();
     // @ts-ignore
     this.dispatcher.handlers = [];
     this.registerHandlers();
@@ -55,8 +57,7 @@ export class EdgeAgent extends Agent {
 
   protected registerHandlers() {
     super.registerHandlers();
-    this.dispatcher.registerHandler(new ConsentRequestHandler(this.consentService, this.connectionService));
-    this.dispatcher.registerHandler(new ConsentChallengeResponseHandler());
+    this.dispatcher.registerHandler(new ConsentInvitationHandler(this.consentService));
   }
 
   public registerEventHandler(eventEmitter: EventEmitter, eventType: string, handler: (...args: any) => void) {

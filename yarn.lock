@@ -1854,9 +1854,9 @@ argparse@^1.0.7:
   dependencies:
     sprintf-js "~1.0.2"
 
-aries-framework-javascript@../../aries-framework-javascript/aries-framework-javascript-v1.0.15.tgz:
-  version "1.0.15"
-  resolved "../../aries-framework-javascript/aries-framework-javascript-v1.0.15.tgz#149b46727cd2af05772c01d13fa736e1bff740ff"
+aries-framework-javascript@../../aries-framework-javascript/aries-framework-javascript-v1.0.18.tgz:
+  version "1.0.18"
+  resolved "../../aries-framework-javascript/aries-framework-javascript-v1.0.18.tgz#efc343dcd048ec8c644c72cbe69a3dda2951269c"
   dependencies:
     "@types/bs58" "^4.0.1"
     await-poll "^1.0.2"

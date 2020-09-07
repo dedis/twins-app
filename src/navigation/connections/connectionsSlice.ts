@@ -17,11 +17,14 @@ const connections = createSlice({
         addConnection(state, action: PayloadAction<LayoutItem>) {
             logger.log('pushing into state');
             state.items.push(action.payload)
+        },
+        addConnections(state, action: PayloadAction<LayoutItem[]>) {
+            state.items.push(...action.payload)
         }
     }
 })
 
-export const { addConnection }  = connections.actions
+export const { addConnection, addConnections }  = connections.actions
 export default connections.reducer
 
 export const fetchAndAddConnection = (

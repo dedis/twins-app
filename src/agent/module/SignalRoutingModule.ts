@@ -95,7 +95,11 @@ export class SignalRRoutingModule {
     });
 
     if (this.agentConfig.publicDidSeed) {
+      try {
         await this.consumerRoutingService.createRoute(this.wallet.getPublicDid()!.verkey);
+      } catch (err) {
+        // ignore if the route already exists
+      }
     }
 
     return agentConnectionAtAgency;

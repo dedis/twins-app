@@ -7,8 +7,9 @@ import { ScanScreen } from './scan.component';
 import { ConnectionsScreen } from './connections/connections.component';
 import { TabBarComponent } from './tabbar.component';
 import messaging from './messaging';
-import { NotificationScreen } from './notification.component';
+import { NotificationScreen } from './notifications/notification.component';
 import { ConsentRequestScreen } from './consentrequest.component';
+import { ConsentInviteScreen } from './notifications/consentinvite.component';
 
 const connectionStack = createStackNavigator({
   Connections: ConnectionsScreen,
@@ -28,7 +29,7 @@ const homeStack = createStackNavigator({
 
 const notificationStack = createStackNavigator({
   Notifications: NotificationScreen,
-  ConsentRequest: ConsentRequestScreen,
+  CohortInvite: ConsentInviteScreen,
 }, {
   initialRouteName: 'Notifications',
   headerMode: 'none'

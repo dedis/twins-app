@@ -1,16 +1,23 @@
-import { createConsentChallengeRequest } from './messages';
-import { createOutboundMessage } from 'aries-framework-javascript/build/lib/protocols/helpers';
-import { Connection } from 'aries-framework-javascript';
-import { Message } from 'aries-framework-javascript/build/lib/types';
+import { ConsentInvitationMessage } from './ConsentInvitationMessage';
+import store from 'src/app/store';
+import { NotificationItem, addNotification, NotificationState } from 'src/navigation/notifications/notificationsSlice'
+import { classToPlain } from 'class-transformer';
+import logger from 'aries-framework-javascript/build/lib/logger';
 
 export class ConsentService {
-  nonceMap: {[key: string]: string};
-  dataMap: {[key: string]: {}};
-
-  constructor() {
-    this.nonceMap = {};
-    this.dataMap = {};
+  async acceptConsentInvitation(consentInvitation: ConsentInvitationMessage) {
+    const serialized = classToPlain(consentInvitation);
+    const item: NotificationItem<{}> = {
+      title: 'Consent Invitation',
+      description: 'An invitation to participate in a study',
+      id: consentInvitation.id,
+      state: NotificationState.INVITED,
+      payload: serialized,
+    }
+    store.dispatch(addNotification(item));
   }
+
+  /*
 
   challengeRequest(connection: Connection, message: Message) {
     const req = createConsentChallengeRequest();
@@ -42,4 +49,5 @@ export class ConsentService {
     }
     return this.dataMap[connection.theirDid];
   }
+  */
 }
