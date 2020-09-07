@@ -1854,9 +1854,9 @@ argparse@^1.0.7:
   dependencies:
     sprintf-js "~1.0.2"
 
-aries-framework-javascript@../../aries-framework-javascript/aries-framework-javascript-v1.0.7.tgz:
-  version "1.0.7"
-  resolved "../../aries-framework-javascript/aries-framework-javascript-v1.0.7.tgz#1edf239f8c4f96c6e17ef6104b0d2437701edca4"
+aries-framework-javascript@../../aries-framework-javascript/aries-framework-javascript-v1.0.15.tgz:
+  version "1.0.15"
+  resolved "../../aries-framework-javascript/aries-framework-javascript-v1.0.15.tgz#149b46727cd2af05772c01d13fa736e1bff740ff"
   dependencies:
     "@types/bs58" "^4.0.1"
     await-poll "^1.0.2"
@@ -7382,9 +7382,9 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
-rn-indy-sdk@../rn-indy-sdk/rn-indy-sdk-v0.1.7.tgz:
-  version "0.1.7"
-  resolved "../rn-indy-sdk/rn-indy-sdk-v0.1.7.tgz#b0d389e16048118258fc8df9d48b24482f7da7de"
+rn-indy-sdk@../rn-indy-sdk/rn-indy-sdk-v0.1.10.tgz:
+  version "0.1.10"
+  resolved "../rn-indy-sdk/rn-indy-sdk-v0.1.10.tgz#22e208ee6ca4f5963b9052e50e6aefb009c12f49"
 
 rn-nodeify@^10.2.0:
   version "10.2.0"

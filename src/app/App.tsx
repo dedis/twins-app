@@ -12,10 +12,10 @@ import {setJSExceptionHandler } from 'react-native-exception-handler';
 
 import store from './store'
 
-setJSExceptionHandler(async (error, isFatal) => {
-  await agentModule.getAgent().closeAndDeleteWallet();
-  throw error;
-}, true);
+// setJSExceptionHandler(async (error, isFatal) => {
+//   await agentModule.getAgent().closeAndDeleteWallet();
+//   throw error;
+// }, true);
 
 const App = () => {
   const [notificationState, setNotificationState] = React.useState<Notification[]>([]);

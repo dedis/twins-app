@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { SafeAreaView } from 'react-navigation';
-import { Image } from 'react-native';
+import { Image, PermissionsAndroid } from 'react-native';
 import { Button, Layout, Spinner } from '@ui-kitten/components';
 import QRCode from 'react-native-qrcode-svg';
 import { myTheme } from '../app/custom-theme';
 import RNFS from 'react-native-fs';
 import { EdgeAgent } from 'src/agent/agent';
+import { genesis_txn } from 'src/app/config';
 
 enum AgentState {
   UNPROVISIONED,
@@ -84,7 +85,19 @@ export const HomeScreen = ({ navigation, screenProps }) => {
         console.log('Ignored error from wallet cleanup: ', err.message);
       })
     await agent.init();
-    setAgentState(AgentState.PROVISIONED)
+    const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
+      title: 'Store the genesis file',
+      message: 'Edge Agent needs your permission to store transactions locally in your mobile',
+      buttonNegative: 'Cancel',
+      buttonPositive: 'OK',
+    });
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      const path = `${RNFS.ExternalStorageDirectoryPath}/genesis.txn`;
+      RNFS.writeFile(path, genesis_txn)
+      console.log('Genesis txn file at ', path);
+      await (agent as EdgeAgent).ledger.connect('buildernet', { genesis_txn: path })
+      setAgentState(AgentState.PROVISIONED)
+    }
   };
 
   const onCreateInvite = async () => {

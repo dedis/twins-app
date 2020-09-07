@@ -10,23 +10,30 @@ import { ConnectionState } from "aries-framework-javascript/build/lib/protocols/
 import { createOutboundMessage } from "aries-framework-javascript/build/lib/protocols/helpers";
 import { CreateInboxMessage } from "../protocols/routing/CreateInboxMessage";
 import { AgentMessage } from "aries-framework-javascript/build/lib/agent/AgentMessage";
+import { ConsumerRoutingService } from "aries-framework-javascript/build/lib/protocols/routing/ConsumerRoutingService";
 
 export class SignalRRoutingModule {
   private agentConfig: AgentConfig;
   private provisioningService: ProvisioningService;
   private connectionService: ConnectionService;
   private messageSender: MessageSender;
+  private wallet: Wallet;
+  private consumerRoutingService: ConsumerRoutingService;
 
   public constructor(
     agentConfig: AgentConfig,
     provisioningService: ProvisioningService,
     connectionService: ConnectionService,
     messageSender: MessageSender,
+    consumerRoutingService: ConsumerRoutingService,
+    wallet: Wallet,
   ) {
     this.agentConfig = agentConfig;
     this.provisioningService = provisioningService;
     this.connectionService = connectionService;
     this.messageSender = messageSender;
+    this.consumerRoutingService = consumerRoutingService;
+    this.wallet = wallet;
   }
 
   public async provision() {
@@ -57,6 +64,9 @@ export class SignalRRoutingModule {
       await this.messageSender.sendMessage(ack);
       logger.log('Sent ack');
 
+      const cInboxMessage = createOutboundMessage(connection!, new CreateInboxMessage());
+      await this.messageSender.sendAndReceiveMessage(cInboxMessage, AgentMessage);
+
       const provisioningProps = {
         agencyConnectionId: connectionRequest.connection.id,
         agencyPublicVerkey: connectionRequest.connection.theirKey!,
@@ -64,8 +74,6 @@ export class SignalRRoutingModule {
       provisioningRecord = await this.provisioningService.create(provisioningProps);
       logger.log('Provisioning record has been saved.');
 
-      const cInboxMessage = createOutboundMessage(connection!, new CreateInboxMessage());
-      await this.messageSender.sendAndReceiveMessage(cInboxMessage, AgentMessage);
     }
 
     logger.log('Provisioning record:', provisioningRecord);
@@ -85,6 +93,10 @@ export class SignalRRoutingModule {
       verkey: provisioningRecord.agencyPublicVerkey,
       connection: agentConnectionAtAgency,
     });
+
+    if (this.agentConfig.publicDidSeed) {
+        await this.consumerRoutingService.createRoute(this.wallet.getPublicDid()!.verkey);
+    }
 
     return agentConnectionAtAgency;
   }

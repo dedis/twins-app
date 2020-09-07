@@ -4,6 +4,8 @@ import { useSafeArea } from 'react-native-safe-area-context';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { ImageStyle } from 'react-native';
 import { Agent } from 'aries-framework-javascript';
+import { ConnectionInvitationMessage } from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage';
+import { plainToClass } from "class-transformer";
 
 export const ScanScreen = ({ navigation, screenProps }) => {
   const themedStyles = StyleService.create({
@@ -29,8 +31,10 @@ export const ScanScreen = ({ navigation, screenProps }) => {
   );
 
   const onRead = async (e: any) => {
-    console.log('Accepting invitation...');
-    await (agent as Agent).didexchange.acceptInvite(e.data);
+    console.log('Accepting invitation...', e.data);
+    const invitationJSON: {} = JSON.parse(e.data);
+    const invite = plainToClass(ConnectionInvitationMessage, invitationJSON);
+    await (agent as Agent).didexchange.acceptInviteWithPublicDID(invite);
     console.log('Done');
     navigation.navigate('Connections');
   }

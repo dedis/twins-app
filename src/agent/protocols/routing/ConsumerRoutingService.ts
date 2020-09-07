@@ -24,7 +24,7 @@ class CustomConsumerRoutingService extends ConsumerRoutingService {
       const routingConnection = this._agentConfig.inboundConnection.connection;
 
 
-      const message = new AddRouteMessage({ routeDestination: this._agentConfig.inboundConnection.verkey });
+      const message = new AddRouteMessage({ routeDestination: verkey });
       const outboundMessage = createOutboundMessage(routingConnection, message);
       await this._messageSender.sendMessage(outboundMessage);
     }

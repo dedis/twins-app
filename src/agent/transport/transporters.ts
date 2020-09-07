@@ -2,6 +2,7 @@ import { InboundTransporter, Agent, OutboundTransporter } from "aries-framework-
 import { OutboundPackage } from "aries-framework-javascript/build/lib/types";
 import { EdgeAgent } from "../agent";
 import logger from "aries-framework-javascript/build/lib/logger"
+import {mediatorURL } from 'src/app/config'
 
 export class RealTimeInboundTransporter implements InboundTransporter {
   state: number = 0;
@@ -30,8 +31,9 @@ export class RealTimeInboundTransporter implements InboundTransporter {
 
 export class HTTPOutboundTransporter implements OutboundTransporter {
   async sendMessage(outboundPackage: OutboundPackage, receive_reply: boolean): Promise<any> {
+    const contentType = 'application/didcomm-envelope-enc';
     const body = await fetch(outboundPackage.endpoint || '', {
-      headers: [['Content-Type', 'application/ssi-agent-wire']],
+      headers: [['Content-Type', contentType]],
       method: 'POST',
       body: JSON.stringify(outboundPackage.payload),
     });
