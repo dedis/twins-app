@@ -19,14 +19,16 @@ export interface Notification extends LayoutItem {
 }
 
 
-const { INVITED, INVITE_DENIED, REQUESTED, REQUEST_DENIED, REQUEST_ACCEPTED } = NotificationState;
+const { INVITED, INVITE_DENIED, INFORMATION_REQUESTED, INFORMATION_PROVIDED, INFORMATION_FAILURE, CONSENT_GRANTED, CONSENT_DENIED} = NotificationState;
 
 const stateToRouteMap = {
-  0: 'CohortInvite',
-  1: 'CohortInvite',
-  2: 'CohortRequest',
-  3: 'CohortReqest',
-  4: 'CohortRequest'
+  0: 'ConsentInvite',
+  1: 'ConsentInvite',
+  2: 'ConsentInvite',
+  3: 'ConsentInformationRequest',
+  4: 'ConsentInformationRequest',
+  5: 'ConsentInformationRequest',
+  6: 'ConsentInformationRequest',
 }
 
 export const NotificationScreen = ({navigation, screenProps}) => {

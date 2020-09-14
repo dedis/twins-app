@@ -1,25 +1,26 @@
 import React, { useEffect } from 'react';
 import { useSafeArea } from "react-native-safe-area-context"
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "src/app/rootReducer";
 import { View, Text } from "react-native";
 import { ConnectionInvitationMessage } from "aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage";
 import { Button, Layout, TopNavigation, Card, StyleService, useStyleSheet } from "@ui-kitten/components";
-import { NotificationState } from "./notificationsSlice";
+import { NotificationState, updateNotificationState } from "./notificationsSlice";
 import logger from "aries-framework-javascript/build/lib/logger"
 import { ConsentInvitationMessage } from "src/agent/protocols/consent/ConsentInvitationMessage";
-import { plainToClass } from 'class-transformer';
+import { plainToClass, classToPlain } from 'class-transformer';
+import { EdgeAgent } from 'src/agent/agent';
 
 export const ConsentInviteScreen = ({ navigation, screenProps }) => {
     const safeArea = useSafeArea();
 
-    const { agen } = screenProps;
+    const { agent } = screenProps;
     const notificationId = navigation.getParam('notificationId');
-    logger.log('notificationId', notificationId);
 
     const notifications = useSelector((state: RootState) => state.notifications);
 
     const notification = notifications.itemsById[notificationId];
+    logger.logJson('notification', notification);
     const payload = plainToClass(ConsentInvitationMessage, notification.payload);
 
 
@@ -46,12 +47,16 @@ export const ConsentInviteScreen = ({ navigation, screenProps }) => {
     });
     const styles = useStyleSheet(themedStyles);
 
-    const onAccept = () => {
-        logger.log('Accepted');
+    const onAccept = async () => {
+        logger.log('Accepted. Requesting information');
+        await (agent as EdgeAgent).consentModule.requestConsentInformation(notificationId);
+        logger.log('Got information');
     }
 
-    const onDeny = () => {
-        logger.log('Accepted');
+    const onDeny = async () => {
+        logger.log('Denied');
+        await (agent as EdgeAgent).consentModule.denyInvite(notificationId);
+        logger.log('Denied');
     }
 
     const Header = () => (
@@ -88,6 +93,14 @@ export const ConsentInviteScreen = ({ navigation, screenProps }) => {
         </Card>
     )
 
+    const accepted = (
+        <Card header={Header}>
+            <View>
+                <Text>You have accepted this invite. Waiting for more information from the researcher</Text>
+            </View>
+        </Card>
+    )
+
     return (
         <Layout
             style={[styles.container, { paddingTop: safeArea.top }]}
@@ -100,6 +113,7 @@ export const ConsentInviteScreen = ({ navigation, screenProps }) => {
             <View style={{ margin: 10, flex: 1, justifyContent: 'center', alignContent: 'center' }}>
                 {notification.state === NotificationState.INVITE_DENIED && denied}
                 {notification.state === NotificationState.INVITED && invited}
+                {notification.state === NotificationState.INFORMATION_REQUESTED && accepted}
             </View>
         </Layout>
     );

@@ -1,14 +1,17 @@
 import { LayoutItem } from '../../model/layout-item.model';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { BaseRecord } from 'aries-framework-javascript/build/lib/storage/BaseRecord';
 
 type NotificationPayload = {}
 
 export enum NotificationState {
   INVITED,
   INVITE_DENIED,
-  REQUESTED,
-  REQUEST_DENIED,
-  REQUEST_ACCEPTED,
+  INFORMATION_REQUESTED,
+  INFORMATION_PROVIDED,
+  INFORMATION_FAILURE,
+  CONSENT_GRANTED,
+  CONSENT_DENIED,
 }
 
 export type NotificationItem<T extends NotificationPayload> = {
@@ -51,6 +54,7 @@ const notifications = createSlice({
             state.items[idx].payload = stateUpdate.payload;
             state.items[idx].state = stateUpdate.state;
             state.itemsById[stateUpdate.id].payload = stateUpdate.payload;
+            state.itemsById[stateUpdate.id].state = stateUpdate.state;
         }
     }
 });

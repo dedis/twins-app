@@ -1,15 +1,12 @@
 import { AgentMessage } from "aries-framework-javascript/build/lib/agent/AgentMessage";
 import { ConnectionInvitationMessage } from "aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage";
+import { MessageType } from "./messages";
 
 export interface ConsentInvitationMessageOptions {
     id: string,
     invitation: ConnectionInvitationMessage,
     synopsis: string,
     cohortID: string,
-}
-
-export enum MessageType {
-    InvitationMessage = 'https://dedis.epfl.ch/consent/1.0/information/invite',
 }
 
 export class ConsentInvitationMessage extends AgentMessage {

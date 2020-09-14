@@ -21,15 +21,21 @@ import logger from "aries-framework-javascript/build/lib/logger"
 import { ConnectionState } from 'aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
 import store from 'src/app/store';
 import { ConsentInvitationHandler } from './handlers/consent/ConsentInvitationHandler';
+import { Repository } from 'aries-framework-javascript/build/lib/storage/Repository';
+import { ConsentRecord } from './protocols/consent/ConsentRecord';
+import { ConsentModule } from './module/ConsentModule';
+import { ConsentInformationResponseHandler } from './handlers/consent/ConsentInformationResponseHandler';
 
 debug.enable('aries-framework-javascript');
 
 export class EdgeAgent extends Agent {
   protected consentService: ConsentService;
-  protected eventEmitters: Set<EventEmitter>
+  protected consentRepository: Repository<ConsentRecord>;
+  protected eventEmitters: Set<EventEmitter>;
 
-  public signalRRoutingModule!: SignalRRoutingModule
-  public signalRClientModule!: SignalRClientModule
+  public signalRRoutingModule!: SignalRRoutingModule;
+  public signalRClientModule!: SignalRClientModule;
+  public consentModule!: ConsentModule;
 
   public constructor(
     initialConfig: InitConfig,
@@ -39,13 +45,13 @@ export class EdgeAgent extends Agent {
     messageRepository?: MessageRepository
   ) {
     super(initialConfig, inboundTransporter, outboundTransporter, indy, messageRepository);
-    this.consentService = new ConsentService();
     this.eventEmitters = new Set();
+    this.consentRepository = new Repository<ConsentRecord>(ConsentRecord, this.storageService);
 
     // We have our own implementation of ConsumerRoutingService
     this.consumerRoutingService = new CustomConsumerRoutingService(this.messageSender, this.agentConfig);
     this.didexchangeService = new ExchangeService(this.wallet, this.agentConfig, this.connectionRepository, this.ledgerService, this.consumerRoutingService);
-    this.consentService = new ConsentService();
+    this.consentService = new ConsentService(this.didexchangeService, this.messageSender, this.consentRepository, this.connectionRepository, this.wallet);
     // @ts-ignore
     this.dispatcher.handlers = [];
     this.registerHandlers();
@@ -58,6 +64,7 @@ export class EdgeAgent extends Agent {
   protected registerHandlers() {
     super.registerHandlers();
     this.dispatcher.registerHandler(new ConsentInvitationHandler(this.consentService));
+    this.dispatcher.registerHandler(new ConsentInformationResponseHandler(this.consentService));
   }
 
   public registerEventHandler(eventEmitter: EventEmitter, eventType: string, handler: (...args: any) => void) {
@@ -89,6 +96,7 @@ export class EdgeAgent extends Agent {
       this.messageReceiver,
       this.agentConfig,
     )
+    this.consentModule = new ConsentModule(this.consentService, this.messageSender);
   }
 }
 
@@ -100,6 +108,7 @@ class AgentModule {
     const inboundTransporter = new RealTimeInboundTransporter();
     const outboundTransporter = new HTTPOutboundTransporter();
 
+
     const config: InitConfig = {
       label: 'EdgeAgent',
       agencyUrl: mediatorURL,
@@ -108,7 +117,7 @@ class AgentModule {
       walletConfig: {
         id: 'EdgeWallet',
         storage_config: {
-          path: RNFS.DocumentDirectoryPath + '/.indy_wallet',
+          path: RNFS.ExternalDirectoryPath + '/indy_wallet',
         },
       },
       walletCredentials: {

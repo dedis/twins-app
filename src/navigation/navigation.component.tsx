@@ -10,6 +10,7 @@ import messaging from './messaging';
 import { NotificationScreen } from './notifications/notification.component';
 import { ConsentRequestScreen } from './consentrequest.component';
 import { ConsentInviteScreen } from './notifications/consentinvite.component';
+import { ConsentInformationRequestScreen } from './notifications/consentinformationrequest.component';
 
 const connectionStack = createStackNavigator({
   Connections: ConnectionsScreen,
@@ -29,7 +30,8 @@ const homeStack = createStackNavigator({
 
 const notificationStack = createStackNavigator({
   Notifications: NotificationScreen,
-  CohortInvite: ConsentInviteScreen,
+  ConsentInvite: ConsentInviteScreen,
+  ConsentInformationRequest: ConsentInformationRequestScreen,
 }, {
   initialRouteName: 'Notifications',
   headerMode: 'none'

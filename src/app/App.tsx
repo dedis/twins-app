@@ -7,8 +7,8 @@ import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import { mapping, dark } from '@eva-design/eva';
 import {AppNavigator} from '../navigation/navigation.component';
 import { myTheme } from './custom-theme';
-import { Notification } from '../navigation/notification.component';
 import {setJSExceptionHandler } from 'react-native-exception-handler';
+import { Log } from '@dedis/cothority';
 
 import store from './store'
 
@@ -18,11 +18,11 @@ import store from './store'
 // }, true);
 
 const App = () => {
-  const [notificationState, setNotificationState] = React.useState<Notification[]>([]);
-
   const theme = { ...dark, ...myTheme };
 
   const agent = agentModule.getAgent();
+  // Set cothority logging level to verbose;
+  Log.lvl = 4;
 
   useEffect(() => {
     return () => {
@@ -35,7 +35,7 @@ const App = () => {
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider mapping={mapping} theme={theme}>
         <Provider store={store}>
-          <AppNavigator screenProps={{ agent, notificationState, setNotificationState }} />
+          <AppNavigator screenProps={{ agent }} />
         </Provider>
       </ApplicationProvider>
     </React.Fragment>
