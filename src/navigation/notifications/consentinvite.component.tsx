@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import { useSafeArea } from "react-native-safe-area-context"
+import { useSafeArea, SafeAreaView } from "react-native-safe-area-context"
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "src/app/rootReducer";
 import { View, Text } from "react-native";
 import { ConnectionInvitationMessage } from "aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage";
-import { Button, Layout, TopNavigation, Card, StyleService, useStyleSheet } from "@ui-kitten/components";
+import { Button, Layout, TopNavigation, Card, StyleService, useStyleSheet, Spinner } from "@ui-kitten/components";
 import { NotificationState, updateNotificationState } from "./notificationsSlice";
 import logger from "aries-framework-javascript/build/lib/logger"
 import { ConsentInvitationMessage } from "src/agent/protocols/consent/ConsentInvitationMessage";
@@ -18,88 +18,62 @@ export const ConsentInviteScreen = ({ navigation, screenProps }) => {
     const notificationId = navigation.getParam('notificationId');
 
     const notifications = useSelector((state: RootState) => state.notifications);
+    const [ busy, setBusy ] = React.useState<boolean>(false);
 
     const notification = notifications.itemsById[notificationId];
-    logger.logJson('notification', notification);
     const payload = plainToClass(ConsentInvitationMessage, notification.payload);
-
 
     const themedStyles = StyleService.create({
         container: {
             flex: 1,
         },
-        button: {
-        },
-        cardText: {
-            paddingBottom: 10,
-            marginBottom: 10,
-            color: 'color-basic-500'
-        },
-        headerText: {
-            padding: 25,
-            color: 'color-basic-500'
-        },
-        currentStatusContainer: {
+        description: {
             color: 'color-basic-500',
-            marginTop: 15,
-            borderTopWidth: 1,
+            fontSize: 15,
         }
     });
     const styles = useStyleSheet(themedStyles);
 
     const onAccept = async () => {
-        logger.log('Accepted. Requesting information');
+        setBusy(true);
         await (agent as EdgeAgent).consentModule.requestConsentInformation(notificationId);
-        logger.log('Got information');
+        setBusy(false);
+        navigation.pop();
+        navigation.navigate('ConsentInformationRequest', { notificationId });
     }
 
     const onDeny = async () => {
-        logger.log('Denied');
+        setBusy(true);
         await (agent as EdgeAgent).consentModule.denyInvite(notificationId);
+        setBusy(false);
         logger.log('Denied');
     }
 
-    const Header = () => (
-        <View>
-            <Text>Synopsis {payload.synopsis}</Text>
-        </View>
-    );
-
-    const Footer = () => (
-        <View>
-            <Button
-                onPress={onDeny}
-                size='small' status='danger'>
-                NO THANKS
-            </Button>
-        </View>
-    )
-
-    const invited = (
-        <Card header={Header} footer={Footer}>
-            <Button
-                onPress={onAccept}
-                size='small' status='danger'>
-                TELL ME MORE
-            </Button>
-        </Card>
-    )
+    const REQUEST_MORE = 'Request more information';
+    const IGNORE = 'Ingore this request'
 
     const denied = (
-        <Card header={Header}>
-            <View>
-                <Text>You have denied this invite</Text>
-            </View>
-        </Card>
+        <Button disabled>{IGNORE}</Button>
     )
 
-    const accepted = (
-        <Card header={Header}>
-            <View>
-                <Text>You have accepted this invite. Waiting for more information from the researcher</Text>
-            </View>
-        </Card>
+    const undecided = (
+        <View>
+            <Button style={{ marginBottom: 20 }} onPress={onAccept}>{REQUEST_MORE}</Button>
+            <Button onPress={onDeny}>{IGNORE}</Button>
+        </View>
     )
+
+    const waiting = (
+        <SafeAreaView style={{ flex: 1 }}>
+          <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Spinner size='large' />
+          </Layout>
+        </SafeAreaView>
+    );
+
+    if (busy) {
+        return waiting;
+    }
 
     return (
         <Layout
@@ -111,9 +85,13 @@ export const ConsentInviteScreen = ({ navigation, screenProps }) => {
                 title='Consent Invitation'
             />
             <View style={{ margin: 10, flex: 1, justifyContent: 'center', alignContent: 'center' }}>
-                {notification.state === NotificationState.INVITE_DENIED && denied}
-                {notification.state === NotificationState.INVITED && invited}
-                {notification.state === NotificationState.INFORMATION_REQUESTED && accepted}
+                <Card style={{ marginBottom: 25 }}>
+                    <View>
+                        <Text style={styles.description}>{payload.synopsis}</Text>
+                    </View>
+                </Card>
+                { notification.state === NotificationState.INVITED && undecided}
+                { notification.state === NotificationState.INVITE_DENIED && denied}
             </View>
         </Layout>
     );

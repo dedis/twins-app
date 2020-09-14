@@ -24,7 +24,7 @@ const { INVITED, INVITE_DENIED, INFORMATION_REQUESTED, INFORMATION_PROVIDED, INF
 const stateToRouteMap = {
   0: 'ConsentInvite',
   1: 'ConsentInvite',
-  2: 'ConsentInvite',
+  2: 'ConsentInformationRequest',
   3: 'ConsentInformationRequest',
   4: 'ConsentInformationRequest',
   5: 'ConsentInformationRequest',
@@ -38,9 +38,6 @@ export const NotificationScreen = ({navigation, screenProps}) => {
     logger.logJson('stateToRouteMap', stateToRouteMap);
     // @ts-ignore
     const route = stateToRouteMap[notifications.items[index].state.toString()];
-    logger.log('route', route);
-    logger.log('id', notifications.items[index].id);
-    logger.logJson('itemsById', notifications.itemsById);
     navigation.navigate(route, { notificationId: notifications.items[index].id });
   }
 
