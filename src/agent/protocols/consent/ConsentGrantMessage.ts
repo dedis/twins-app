@@ -4,6 +4,7 @@ import { MessageType } from "./messages";
 export interface ConsentGrantMessageOptions {
     id?: string;
     writeInstanceID: string;
+    filename: string;
 }
 
 export class ConsentGrantMessage extends AgentMessage {
@@ -17,6 +18,7 @@ export class ConsentGrantMessage extends AgentMessage {
     if (options) {
         this.id = options.id || this.generateId();
         this.writeInstanceID = options.writeInstanceID;
+        this.filename = options.filename;
     }
   }
 
@@ -26,4 +28,6 @@ export class ConsentGrantMessage extends AgentMessage {
   public id!: string;
 
   public writeInstanceID!: string;
+
+  public filename!: string;
 }

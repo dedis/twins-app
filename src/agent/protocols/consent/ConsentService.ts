@@ -17,7 +17,7 @@ import { ReturnRouteTypes } from 'aries-framework-javascript/build/lib/decorator
 import { InboundMessageContext } from 'aries-framework-javascript/build/lib/agent/models/InboundMessageContext';
 import { ConsentInformationResponseMessage } from './ConsentInformationResponseMessage';
 import { Roster } from '@dedis/cothority/network/proto';
-import { bcID, writeInstanceID, documentDarc } from 'src/app/config';
+import { bcID, writeInstanceID, filename, documentDarc } from 'src/app/config';
 import rosterData from 'src/app/roster';
 import { SkipchainRPC, SkipBlock } from '@dedis/cothority/skipchain';
 import ByzCoinRPC from '@dedis/cothority/byzcoin/byzcoin-rpc';
@@ -51,8 +51,8 @@ export class ConsentService {
   async receiveConsentInvitation(consentInvitation: ConsentInvitationMessage) {
     const serialized = classToPlain(consentInvitation);
     const item: NotificationItem<{}> = {
-      title: 'Consent Invitation',
-      description: 'An invitation to participate in a study',
+      title: 'Invitation',
+      description: `An invitation to participate in a study from ${consentInvitation.invitation.did!}`,
       id: consentInvitation.id,
       state: NotificationState.INVITED,
       payload: serialized,
@@ -135,7 +135,7 @@ export class ConsentService {
     const record = await this.consentRepository.find(invitationId);
     const connectionRecord = await this.connectionRepository.find(record.connectionID!);
 
-    /*
+    // /*
     const roster = Roster.fromTOML(rosterData);
     const genesisBlock = Buffer.from(bcID, 'hex');
     const skipchainRpc = new SkipchainRPC(roster);
@@ -162,7 +162,8 @@ export class ConsentService {
     console.log('created signer');
     await darc.evolveDarcAndWait(newDarc, [signer], 100);
     console.log(`Evolved darc and added ${publicDid} to spawn:calypsoRead rule`);
-    */
+    // */
+
     record.state = NotificationState.CONSENT_GRANTED;
     await this.consentRepository.update(record);
     store.dispatch(updateNotificationState({
@@ -171,7 +172,7 @@ export class ConsentService {
       payload: record.information!,
     }));
 
-    const consentGrantMessage = new ConsentGrantMessage({ writeInstanceID })
+    const consentGrantMessage = new ConsentGrantMessage({ writeInstanceID, filename })
     consentGrantMessage.setThread({ parentThreadId: record.id })
 
     return createOutboundMessage(connectionRecord, consentGrantMessage);

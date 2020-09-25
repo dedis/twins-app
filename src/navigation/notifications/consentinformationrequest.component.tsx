@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, TopNavigation, useStyleSheet, StyleService, Card, Button, Spinner } from "@ui-kitten/components";
-import { View, Text, Linking, Alert } from "react-native";
+import { View, Text, Linking, Alert, ToastAndroid } from "react-native";
 import { useSafeArea, SafeAreaView } from "react-native-safe-area-context";
 import logger from "aries-framework-javascript/build/lib/logger"
 import { EdgeAgent } from 'src/agent/agent';
@@ -47,10 +47,7 @@ export const ConsentInformationRequestScreen = ({ navigation, screenProps }) => 
     }
 
     const onDeny = async () => {
-        setBusy(true);
-        // TODO
-        // await (agent as EdgeAgent).consentModule.denyConsent(notificationid);
-        setBusy(false);
+        ToastAndroid.show('Unimplemented 🙈', ToastAndroid.SHORT)
     }
 
     const waiting = (
@@ -113,7 +110,7 @@ export const ConsentInformationRequestScreen = ({ navigation, screenProps }) => 
     const undecided = (
         <View>
             <Button style={{ marginBottom: 20 }} onPress={onGrant}>{payload.acceptText}</Button>
-            <Button>{payload.denyText}</Button>
+            <Button onPress={onDeny}>{payload.denyText}</Button>
         </View>
     )
 
