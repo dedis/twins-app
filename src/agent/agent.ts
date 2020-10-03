@@ -117,7 +117,7 @@ class AgentModule {
       walletConfig: {
         id: 'EdgeWallet',
         storage_config: {
-          path: RNFS.ExternalDirectoryPath + '/indy_wallet',
+          path: RNFS.DocumentDirectoryPath + '/indy_wallet',
         },
       },
       walletCredentials: {

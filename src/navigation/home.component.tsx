@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { SafeAreaView } from 'react-navigation';
-import { Image, PermissionsAndroid } from 'react-native';
+import { Image, PermissionsAndroid, Platform } from 'react-native';
 import { Button, Layout, Spinner } from '@ui-kitten/components';
 import QRCode from 'react-native-qrcode-svg';
 import { myTheme } from '../app/custom-theme';
@@ -91,14 +91,33 @@ export const HomeScreen = ({ navigation, screenProps }) => {
       })
     */
     await agent.init();
-    const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
-      title: 'Store the genesis file',
-      message: 'Edge Agent needs your permission to store transactions locally in your mobile',
-      buttonNegative: 'Cancel',
-      buttonPositive: 'OK',
-    });
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      const path = `${RNFS.ExternalStorageDirectoryPath}/genesis.txn`;
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
+        title: 'Store the genesis file',
+        message: 'Edge Agent needs your permission to store transactions locally in your mobile',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      });
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        const path = `${RNFS.ExternalStorageDirectoryPath}/genesis.txn`;
+        RNFS.writeFile(path, genesis_txn);
+        console.log('Genesis txn file at ', path);
+        await (agent as EdgeAgent).ledger.connect('buildernet', { genesis_txn: path });
+
+        // Inflate the connections state
+        const connections = await (agent as EdgeAgent).didexchange.getAll();
+        const items = connections.filter(connection => connection.state === ConnectionState.COMPLETE).map(connection => ({
+          title: connection.invitation?.label!,
+          description: `Connected using identifier: ${connection.did}`,
+        }));
+        dispatch(addConnections(items));
+        setAgentState(AgentState.PROVISIONED);
+      } else {
+        setAgentState(AgentState.UNPROVISIONED);
+      }
+    } else if (Platform.OS === 'ios') {
+      const path = `${RNFS.DocumentDirectoryPath}/genesis.txn`;
+      console.log('Writing to path', path);
       RNFS.writeFile(path, genesis_txn);
       console.log('Genesis txn file at ', path);
       await (agent as EdgeAgent).ledger.connect('buildernet', { genesis_txn: path });
@@ -108,11 +127,9 @@ export const HomeScreen = ({ navigation, screenProps }) => {
       const items = connections.filter(connection => connection.state === ConnectionState.COMPLETE).map(connection => ({
         title: connection.invitation?.label!,
         description: `Connected using identifier: ${connection.did}`,
-       }));
+      }));
       dispatch(addConnections(items));
       setAgentState(AgentState.PROVISIONED);
-    } else {
-      setAgentState(AgentState.UNPROVISIONED);
     }
   };
 
