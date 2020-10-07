@@ -100,7 +100,7 @@ export const HomeScreen = ({ navigation, screenProps }) => {
       });
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         const path = `${RNFS.ExternalStorageDirectoryPath}/genesis.txn`;
-        RNFS.writeFile(path, genesis_txn);
+        await RNFS.writeFile(path, genesis_txn);
         console.log('Genesis txn file at ', path);
         await (agent as EdgeAgent).ledger.connect('buildernet', { genesis_txn: path });
 
@@ -118,7 +118,7 @@ export const HomeScreen = ({ navigation, screenProps }) => {
     } else if (Platform.OS === 'ios') {
       const path = `${RNFS.DocumentDirectoryPath}/genesis.txn`;
       console.log('Writing to path', path);
-      RNFS.writeFile(path, genesis_txn);
+      await RNFS.writeFile(path, genesis_txn);
       console.log('Genesis txn file at ', path);
       await (agent as EdgeAgent).ledger.connect('buildernet', { genesis_txn: path });
 
