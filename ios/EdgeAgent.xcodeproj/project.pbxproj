@@ -20,9 +20,9 @@
 		4D8DA05259FFB782E7D7A44C /* libPods-EdgeAgent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15C3D82CA929B977B32593F8 /* libPods-EdgeAgent.a */; };
 		69CFB4871376CCD7B50B2B8F /* libPods-EdgeAgentTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CEACE3B937BD64A424F91DF /* libPods-EdgeAgentTests.a */; };
 		DF28F01F506CF3DDA27A8501 /* libPods-EdgeAgent-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A249AA2E1E742334DBC4399A /* libPods-EdgeAgent-tvOSTests.a */; };
-		F3397E5C252A793B00DD6B4A /* Indy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3397E5B252A793B00DD6B4A /* Indy.framework */; };
-		F3397E5D252A793B00DD6B4A /* Indy.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F3397E5B252A793B00DD6B4A /* Indy.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F399B1A6251E096700BC6D41 /* Driver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F399B1A5251E096700BC6D41 /* Driver.swift */; };
+		F3E09BF8252F0D870037B689 /* Indy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3E09BF7252F0D870037B689 /* Indy.framework */; };
+		F3E09BF9252F0D870037B689 /* Indy.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F3E09BF7252F0D870037B689 /* Indy.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,7 +49,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F3397E5D252A793B00DD6B4A /* Indy.framework in Embed Frameworks */,
+				F3E09BF9252F0D870037B689 /* Indy.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -81,9 +81,9 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		F1AED2607BEEEBD0A429E854 /* Pods-EdgeAgent.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EdgeAgent.debug.xcconfig"; path = "Target Support Files/Pods-EdgeAgent/Pods-EdgeAgent.debug.xcconfig"; sourceTree = "<group>"; };
-		F3397E5B252A793B00DD6B4A /* Indy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Indy.framework; path = "../../../../Library/Developer/Xcode/Archives/2020-10-04/Indy 04.10.20, 23.40.xcarchive/Products/Library/Frameworks/Indy.framework"; sourceTree = "<group>"; };
 		F399B1A4251E096600BC6D41 /* EdgeAgent-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EdgeAgent-Bridging-Header.h"; sourceTree = "<group>"; };
 		F399B1A5251E096700BC6D41 /* Driver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Driver.swift; sourceTree = "<group>"; };
+		F3E09BF7252F0D870037B689 /* Indy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Indy.framework; path = Pods/Indy.framework; sourceTree = "<group>"; };
 		F7A1C6C748BC107F9AC1AF0E /* libPods-EdgeAgent-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EdgeAgent-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBD0240A997CD6532CF0FD61 /* Pods-EdgeAgent-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EdgeAgent-tvOS.release.xcconfig"; path = "Target Support Files/Pods-EdgeAgent-tvOS/Pods-EdgeAgent-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		FECF485982E1769E9E59C8AC /* Pods-EdgeAgent-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EdgeAgent-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-EdgeAgent-tvOS/Pods-EdgeAgent-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
@@ -102,7 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F3397E5C252A793B00DD6B4A /* Indy.framework in Frameworks */,
+				F3E09BF8252F0D870037B689 /* Indy.framework in Frameworks */,
 				4D8DA05259FFB782E7D7A44C /* libPods-EdgeAgent.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -177,7 +177,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F3397E5B252A793B00DD6B4A /* Indy.framework */,
+				F3E09BF7252F0D870037B689 /* Indy.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				15C3D82CA929B977B32593F8 /* libPods-EdgeAgent.a */,

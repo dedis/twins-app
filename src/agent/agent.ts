@@ -7,8 +7,6 @@ import { RealTimeInboundTransporter, HTTPOutboundTransporter } from "./transport
 import { InitConfig } from "aries-framework-javascript/build/lib/types";
 import { mediatorURL } from "../app/config";
 import { Agent, InboundTransporter, OutboundTransporter } from "aries-framework-javascript";
-import { ConsentRequestHandler } from "./handlers/consent/ConsentRequestHandler";
-import { ConsentChallengeResponseHandler } from "./handlers/consent/ConsentChallengeResponseHandler";
 import { ConsentService } from './protocols/consent/ConsentService';
 import { EventEmitter } from 'events';
 import { EventType, StateChangeEvent, ExchangeService } from 'aries-framework-javascript/build/lib/protocols/didexchange/ExchangeService';
@@ -25,6 +23,7 @@ import { Repository } from 'aries-framework-javascript/build/lib/storage/Reposit
 import { ConsentRecord } from './protocols/consent/ConsentRecord';
 import { ConsentModule } from './module/ConsentModule';
 import { ConsentInformationResponseHandler } from './handlers/consent/ConsentInformationResponseHandler';
+import { walletPath } from 'src/app/config'
 
 debug.enable('aries-framework-javascript');
 
@@ -101,37 +100,26 @@ export class EdgeAgent extends Agent {
 }
 
 class AgentModule {
-  private agent: EdgeAgent
+  private agent: EdgeAgent;
+  private inboundTransporter: InboundTransporter;
+  private outboundTransporter: OutboundTransporter;
 
   constructor() {
     // Initializations
-    const inboundTransporter = new RealTimeInboundTransporter();
-    const outboundTransporter = new HTTPOutboundTransporter();
+    this.inboundTransporter = new RealTimeInboundTransporter();
+    this.outboundTransporter = new HTTPOutboundTransporter();
+  }
 
+  public getAgent(): EdgeAgent {
+    return this.agent;
+  }
 
-    const config: InitConfig = {
-      label: 'EdgeAgent',
-      agencyUrl: mediatorURL,
-      url: mediatorURL,
-      port: 80,
-      walletConfig: {
-        id: 'EdgeWallet',
-        storage_config: {
-          path: RNFS.DocumentDirectoryPath + '/indy_wallet',
-        },
-      },
-      walletCredentials: {
-        key: '1234',
-      },
-      publicDid: 'Baqh3nz5QX3zVQ6RWTmQGr',
-      publicDidSeed: 'fm*njofkMT(vuj>qd4cyCDYjzeCkzUne',
-    };
-    console.log('instantiated agent');
+  public async init(config: InitConfig) {
     this.agent = new EdgeAgent(
       config,
-      inboundTransporter,
-      outboundTransporter,
-      indy,
+      this.inboundTransporter,
+      this.outboundTransporter,
+      indy
     );
 
     // Event Handlers
@@ -143,10 +131,8 @@ class AgentModule {
         store.dispatch(fetchAndAddConnection(this.agent, event.connectionId));
       }
     });
-  }
 
-  public getAgent(): EdgeAgent {
-    return this.agent;
+    await this.agent.init();
   }
 }
 
