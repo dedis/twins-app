@@ -7858,6 +7858,11 @@ secp256k1@^4.0.1:
     node-addon-api "^2.0.0"
     node-gyp-build "^4.2.0"
 
+secrets.js-grempe@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/secrets.js-grempe/-/secrets.js-grempe-2.0.0.tgz#65b32bf6bfe4f40e8ed0e44dc74f469e293a4ab8"
+  integrity sha512-4xkOIaDAg998dTFXZUJTOoVbdLHfB818SMeLJ69ABccgGEKokxsoRFupAFfAImloUSKv4QUGNMgKVbKMf6z0Ug==
+
 "semver@2 || 3 || 4 || 5", semver@^5.0.1, semver@^5.1.0, semver@^5.4.1, semver@^5.5.0, semver@^5.5.1, semver@^5.6.0:
   version "5.7.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.7.1.tgz#a954f931aeba508d307bbf069eff0c01c96116f7"
