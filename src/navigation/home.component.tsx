@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { SafeAreaView } from 'react-navigation';
-import { Image, PermissionsAndroid, Platform } from 'react-native';
+import { Alert, PermissionsAndroid, Platform } from 'react-native';
 import { Button, Layout, Spinner, Text } from '@ui-kitten/components';
 import QRCode from 'react-native-qrcode-svg';
 import { myTheme } from '../app/custom-theme';
@@ -14,6 +14,7 @@ import { ConnectionState } from 'aries-framework-javascript/build/lib/protocols/
 import * as Keychain from 'react-native-keychain';
 import agentModule from 'src/agent/agent';
 import * as crypto from 'crypto';
+import { IOS } from 'react-native-permissions/lib/typescript/constants';
 
 enum AgentState {
   INIT,
@@ -21,6 +22,7 @@ enum AgentState {
   WALLET_NOT_FOUND,
   WALLET_FOUND_KEY_FOUND,
   WALLET_FOUND_KEY_NOT_FOUND,
+  WRITE_PERMISSION_DENIED,
 }
 
 export const HomeScreen = ({ navigation, screenProps }) => {
@@ -32,62 +34,6 @@ export const HomeScreen = ({ navigation, screenProps }) => {
 
   const keylist = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$%^&*()-+'
 
-  // const onProvisionPress = async () => {
-  //   console.log('Provisioning...');
-  //   setAgentState(AgentState.PROVISIONING);
-  //   // TODO: Why does agent.init() not just open the existing wallet?
-  //   /*
-  //   RNFS.unlink(RNFS.DocumentDirectoryPath + '/.indy_wallet')
-  //     .then(() => {
-  //       console.log("Old wallet nuked.")
-  //     })
-  //     .catch((err: Error) => {
-  //       console.log('Ignored error from wallet cleanup: ', err.message);
-  //     })
-  //   */
-  //   await agent.init();
-  //   if (Platform.OS === 'android') {
-  //     const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
-  //       title: 'Store the genesis file',
-  //       message: 'Edge Agent needs your permission to store transactions locally in your mobile',
-  //       buttonNegative: 'Cancel',
-  //       buttonPositive: 'OK',
-  //     });
-  //     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-  //       const path = `${RNFS.ExternalStorageDirectoryPath}/genesis.txn`;
-  //       await RNFS.writeFile(path, genesis_txn);
-  //       console.log('Genesis txn file at ', path);
-  //       await (agent as EdgeAgent).ledger.connect('buildernet', { genesis_txn: path });
-
-  //       // Inflate the connections state
-  //       const connections = await (agent as EdgeAgent).didexchange.getAll();
-  //       const items = connections.filter(connection => connection.state === ConnectionState.COMPLETE).map(connection => ({
-  //         title: connection.invitation?.label!,
-  //         description: `Connected using identifier: ${connection.did}`,
-  //       }));
-  //       dispatch(addConnections(items));
-  //       setAgentState(AgentState.PROVISIONED);
-  //     } else {
-  //       setAgentState(AgentState.UNPROVISIONED);
-  //     }
-  //   } else if (Platform.OS === 'ios') {
-  //     const path = `${RNFS.DocumentDirectoryPath}/genesis.txn`;
-  //     console.log('Writing to path', path);
-  //     await RNFS.writeFile(path, genesis_txn);
-  //     console.log('Genesis txn file at ', path);
-  //     await (agent as EdgeAgent).ledger.connect('buildernet', { genesis_txn: path });
-
-  //     // Inflate the connections state
-  //     const connections = await (agent as EdgeAgent).didexchange.getAll();
-  //     const items = connections.filter(connection => connection.state === ConnectionState.COMPLETE).map(connection => ({
-  //       title: connection.invitation?.label!,
-  //       description: `Connected using identifier: ${connection.did}`,
-  //     }));
-  //     dispatch(addConnections(items));
-  //     setAgentState(AgentState.PROVISIONED);
-  //   }
-  // };
-
   // const onCreateInvite = async () => {
   //   setAgentState(AgentState.CREATING_INVITE);
   //   const invitationUrl = await agent.createInvitationUrl();
@@ -95,6 +41,46 @@ export const HomeScreen = ({ navigation, screenProps }) => {
   //   console.log('invitationUrl', invitationUrl);
   //   setAgentState(AgentState.INVITE_CREATED);
   // }
+
+  const connectToPool = async () => {
+    const path = `${RNFS.DocumentDirectoryPath}/genesis.txn`;
+    const exists = await RNFS.exists(path)
+    switch (Platform.OS) {
+      case 'android':
+      if (!exists) {
+        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
+          title: 'Store the genesis file',
+          message: 'Edge Agent needs your permission to store a file',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        });
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          await RNFS.writeFile(path, genesis_txn);
+          console.log('Genesis txn file at ', path);
+          await (agentModule.getAgent() as EdgeAgent).ledger.connect('buildernet', { genesis_txn: path });
+        } else {
+          setAgentState(AgentState.WRITE_PERMISSION_DENIED);
+        }
+      } else {
+        await (agentModule.getAgent() as EdgeAgent).ledger.connect('buildernet', { genesis_txn: path });
+      }
+    case 'ios':
+      if (!exists) {
+        await RNFS.writeFile(path, genesis_txn);
+      }
+      await (agentModule.getAgent() as EdgeAgent).ledger.connect('buildernet', { genesis_txn: path });
+    }
+  }
+
+  // Inflate the state from wallet
+  const inflateStateFromDB = async () => {
+    const connections = await (agentModule.getAgent() as EdgeAgent).didexchange.getAll();
+    const items = connections.filter(connection => connection.state === ConnectionState.COMPLETE).map(connection => ({
+      title: connection.invitation?.label!,
+      description: `Connected using identifier: ${connection.did}`,
+    }));
+    dispatch(addConnections(items));
+  }
 
   const onScanInvite = () => {
     navigation.navigate('Scan');
@@ -107,19 +93,22 @@ export const HomeScreen = ({ navigation, screenProps }) => {
         setAgentState(AgentState.WALLET_FOUND);
         try {
           const key = await Keychain.getGenericPassword({
-            service: 'org.twins-project.edgeagent',
             accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET_OR_DEVICE_PASSCODE,
             authenticationType: Keychain.AUTHENTICATION_TYPE.DEVICE_PASSCODE_OR_BIOMETRICS,
             accessible: Keychain.ACCESSIBLE.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
             securityLevel: Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
           })
           if (key) {
+            agentConfig.walletCredentials.key = key.password;
+            await agentModule.init(agentConfig);
+            await connectToPool();
+            await inflateStateFromDB();
             setAgentState(AgentState.WALLET_FOUND_KEY_FOUND)
           } else {
             setAgentState(AgentState.WALLET_FOUND_KEY_NOT_FOUND);
           }
         } catch (error) {
-          console.log("Error accessing keychain");
+          console.log("Error accessing keychain", error);
         }
       } else {
         setAgentState(AgentState.WALLET_NOT_FOUND);
@@ -168,6 +157,9 @@ export const HomeScreen = ({ navigation, screenProps }) => {
   }
   */
  
+const onShareSecret = () => {
+  Alert.alert('TODO: onShareSecret');
+}
 const onCreateNewWallet = async (_delete: boolean) => {
   if (_delete) {
     await RNFS.unlink(walletPath);
@@ -177,7 +169,6 @@ const onCreateNewWallet = async (_delete: boolean) => {
     .join('');
   
   await Keychain.setGenericPassword(walletPath, agentConfig.walletCredentials.key, {
-    service: 'org.twins-project.edgeagent',
     accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET_OR_DEVICE_PASSCODE,
     authenticationType: Keychain.AUTHENTICATION_TYPE.DEVICE_PASSCODE_OR_BIOMETRICS,
     accessible: Keychain.ACCESSIBLE.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
@@ -200,14 +191,16 @@ switch (provisionState) {
         <SafeAreaView style={{ flex: 1 }}>
           <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text>Wallet Found</Text>
+            <Spinner size='large' />
           </Layout>
         </SafeAreaView>
       )
     case AgentState.WALLET_FOUND_KEY_FOUND:
       return (
         <SafeAreaView style={{ flex: 1 }}>
-          <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>Wallet Found Key Found</Text>
+          <Layout style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
+            <Button onPress={onScanInvite}>Scan Invite</Button>
+            <Button onPress={onShareSecret}>Share Secret</Button>
           </Layout>
         </SafeAreaView>
       )
@@ -226,6 +219,14 @@ switch (provisionState) {
         <SafeAreaView style={{ flex: 1 }}>
           <Layout style={{ padding: 10, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Button onPress={() => onCreateNewWallet(false)}>Create New Wallet</Button>
+          </Layout>
+        </SafeAreaView>
+      )
+    case AgentState.WRITE_PERMISSION_DENIED:
+      return (
+        <SafeAreaView style={{ flex: 1 }}>
+          <Layout style={{ padding: 10, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text>Cannot connect to the network without write permission</Text>
           </Layout>
         </SafeAreaView>
       )
