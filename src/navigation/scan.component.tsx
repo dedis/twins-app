@@ -6,8 +6,9 @@ import { ImageStyle } from 'react-native';
 import { Agent } from 'aries-framework-javascript';
 import { ConnectionInvitationMessage } from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage';
 import { plainToClass } from "class-transformer";
+import agentModule from 'src/agent/agent';
 
-export const ScanScreen = ({ navigation, screenProps }) => {
+export const ScanScreen = ({ navigation }) => {
   const themedStyles = StyleService.create({
     container: {
       flex: 1,
@@ -17,7 +18,7 @@ export const ScanScreen = ({ navigation, screenProps }) => {
   const safeArea = useSafeArea();
   const styles = useStyleSheet(themedStyles);
 
-  const { agent } = screenProps;
+  const agent = agentModule.getAgent();
 
   const renderBackAction = (): React.ReactElement => {
     return <TopNavigationAction

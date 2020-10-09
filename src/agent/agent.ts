@@ -100,17 +100,19 @@ export class EdgeAgent extends Agent {
 }
 
 class AgentModule {
-  private agent: EdgeAgent;
+  private agent: EdgeAgent | null = null;
   private inboundTransporter: InboundTransporter;
   private outboundTransporter: OutboundTransporter;
+  private _initialized: boolean;
 
   constructor() {
     // Initializations
     this.inboundTransporter = new RealTimeInboundTransporter();
     this.outboundTransporter = new HTTPOutboundTransporter();
+    this._initialized = false;
   }
 
-  public getAgent(): EdgeAgent {
+  public getAgent(): EdgeAgent | null {
     return this.agent;
   }
 
@@ -128,11 +130,16 @@ class AgentModule {
     this.agent.registerEventHandler(didExchangeEventEmitter, EventType.StateChanged, (event: StateChangeEvent) => {
       if (event.state == ConnectionState.COMPLETE) {
         logger.log('Established Connection');
-        store.dispatch(fetchAndAddConnection(this.agent, event.connectionId));
+        store.dispatch(fetchAndAddConnection(this.agent!, event.connectionId));
       }
     });
 
     await this.agent.init();
+    this._initialized = true;
+  }
+
+  public initialized(): boolean {
+    return this._initialized;
   }
 }
 

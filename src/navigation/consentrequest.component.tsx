@@ -14,13 +14,16 @@ import { SkipchainRPC, SkipBlock } from '@dedis/cothority/skipchain';
 import { GetUpdateChain, GetUpdateChainReply } from '@dedis/cothority/skipchain/proto';
 import { RosterWSConnection } from '@dedis/cothority/network/connection';
 import { bcID, signerID } from '../app/config';
+import agentModule from 'src/agent/agent';
 
 export const ConsentRequestScreen = ({ navigation, screenProps }) => {
   const safeArea = useSafeArea();
 
-  const { agent, notificationState, setNotificationState } = screenProps;
+  const { notificationState, setNotificationState } = screenProps;
   const { index } = navigation.getParam('data');
   const { documentDarc, publicDid, orgName, studyName, verkey, status } = notificationState[index];
+
+  const agent = agentModule.getAgent();
 
   const [ consentActionState, setConsentActionState ] = React.useState<boolean>(false);
 

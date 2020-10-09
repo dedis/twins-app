@@ -25,12 +25,10 @@ enum AgentState {
   WRITE_PERMISSION_DENIED,
 }
 
-export const HomeScreen = ({ navigation, screenProps }) => {
+export const HomeScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [ provisionState, setAgentState ] = React.useState<AgentState>(AgentState.INIT);
   const [ inviteUrl, setInviteUrl ] = React.useState<string>('');
-
-  const { agent } = screenProps;
 
   const keylist = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$%^&*()-+'
 
@@ -158,8 +156,9 @@ export const HomeScreen = ({ navigation, screenProps }) => {
   */
  
 const onShareSecret = () => {
-  Alert.alert('TODO: onShareSecret');
+  navigation.navigate('SecretShare', { key: agentConfig.walletCredentials.key });
 }
+
 const onCreateNewWallet = async (_delete: boolean) => {
   if (_delete) {
     await RNFS.unlink(walletPath);
@@ -173,8 +172,9 @@ const onCreateNewWallet = async (_delete: boolean) => {
     authenticationType: Keychain.AUTHENTICATION_TYPE.DEVICE_PASSCODE_OR_BIOMETRICS,
     accessible: Keychain.ACCESSIBLE.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
     securityLevel: Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
-  })
-  await agentModule.init(agentConfig)
+  });
+  await agentModule.init(agentConfig);
+  setAgentState(AgentState.WALLET_FOUND_KEY_FOUND);
 }
 
 switch (provisionState) {

@@ -235,7 +235,7 @@ PODS:
     - ReactCommon/jscallinvoker (= 0.61.5)
   - ReactNativeExceptionHandler (2.10.8):
     - React
-  - rn-indy-sdk (0.1.14):
+  - rn-indy-sdk (0.1.15):
     - React
   - RNCMaskedView (0.1.7):
     - React
@@ -428,7 +428,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
   ReactNativeExceptionHandler: 8025d98049c25f186835a3af732dd7c9974d6dce
-  rn-indy-sdk: eaf2059c64634ab9bab6415145f83634729b886f
+  rn-indy-sdk: 00f3e80b635cc00dc4f4fe921ebb470c6e0603a5
   RNCMaskedView: 76c40a1d41c3e2535df09246a2b5487f04de0814
   RNFS: 2bd9eb49dc82fa9676382f0585b992c424cd59df
   RNGestureHandler: dde546180bf24af0b5f737c8ad04b6f3fa51609a

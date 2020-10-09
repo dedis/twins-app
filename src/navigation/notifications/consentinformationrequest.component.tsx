@@ -11,12 +11,14 @@ import { NotificationState } from './notificationsSlice';
 import { ConsentInformationRequestMessage } from 'src/agent/protocols/consent/ConsentInformationRequestMessage';
 import { plainToClass } from 'class-transformer';
 import { ConsentInformationResponseMessage } from 'src/agent/protocols/consent/ConsentInformationResponseMessage';
+import agentModule from 'src/agent/agent';
 
-export const ConsentInformationRequestScreen = ({ navigation, screenProps }) => {
+export const ConsentInformationRequestScreen = ({ navigation }) => {
     const safeArea = useSafeArea();
     const [busy, setBusy] = React.useState<boolean>(false);
 
-    const { agent } = screenProps;
+    const agent = agentModule.getAgent()!;
+
     const themedStyles = StyleService.create({
         container: {
             flex: 1,

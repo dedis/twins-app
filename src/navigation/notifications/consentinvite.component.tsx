@@ -9,12 +9,12 @@ import { NotificationState, updateNotificationState } from "./notificationsSlice
 import logger from "aries-framework-javascript/build/lib/logger"
 import { ConsentInvitationMessage } from "src/agent/protocols/consent/ConsentInvitationMessage";
 import { plainToClass, classToPlain } from 'class-transformer';
-import { EdgeAgent } from 'src/agent/agent';
+import agentModule, { EdgeAgent } from 'src/agent/agent';
 
-export const ConsentInviteScreen = ({ navigation, screenProps }) => {
+export const ConsentInviteScreen = ({ navigation }) => {
     const safeArea = useSafeArea();
 
-    const { agent } = screenProps;
+    const agent = agentModule.getAgent();
     const notificationId = navigation.getParam('notificationId');
 
     const notifications = useSelector((state: RootState) => state.notifications);

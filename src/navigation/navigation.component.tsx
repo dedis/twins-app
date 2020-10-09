@@ -11,6 +11,8 @@ import { NotificationScreen } from './notifications/notification.component';
 import { ConsentRequestScreen } from './consentrequest.component';
 import { ConsentInviteScreen } from './notifications/consentinvite.component';
 import { ConsentInformationRequestScreen } from './notifications/consentinformationrequest.component';
+import { SecretShareScreen } from './secretshare.component';
+import { ShareQRCodeScreen } from './shareqrcode.component';
 
 const connectionStack = createStackNavigator({
   Connections: ConnectionsScreen,
@@ -23,6 +25,8 @@ const connectionStack = createStackNavigator({
 const homeStack = createStackNavigator({
   Home: HomeScreen,
   Scan: ScanScreen,
+  SecretShare: SecretShareScreen,
+  ShareQRCode: ShareQRCodeScreen,
 }, {
   initialRouteName: 'Home',
   headerMode: 'none',
