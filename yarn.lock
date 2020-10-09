@@ -7722,9 +7722,9 @@ rlp@^2.2.3:
   dependencies:
     bn.js "^4.11.1"
 
-rn-indy-sdk@../rn-indy-sdk/rn-indy-sdk-v0.1.14.tgz:
-  version "0.1.14"
-  resolved "../rn-indy-sdk/rn-indy-sdk-v0.1.14.tgz#66a541eba7b8f435760e5e89e7aa00885b9190d5"
+rn-indy-sdk@../rn-indy-sdk/rn-indy-sdk-v0.1.15.tgz:
+  version "0.1.15"
+  resolved "../rn-indy-sdk/rn-indy-sdk-v0.1.15.tgz#626ba633442e96f4b5882045a7b03295880efdd9"
 
 rn-nodeify@^10.2.0:
   version "10.2.0"
