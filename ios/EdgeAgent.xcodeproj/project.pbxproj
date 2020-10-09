@@ -713,12 +713,13 @@
 				INFOPLIST_FILE = EdgeAgent/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.twins.project.twinsapp;
 				PRODUCT_NAME = EdgeAgent;
 				SWIFT_OBJC_BRIDGING_HEADER = "EdgeAgent-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -781,12 +782,13 @@
 				INFOPLIST_FILE = EdgeAgent/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.twins.project.twinsapp;
 				PRODUCT_NAME = EdgeAgent;
 				SWIFT_OBJC_BRIDGING_HEADER = "EdgeAgent-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
