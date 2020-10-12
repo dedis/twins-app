@@ -1,20 +1,17 @@
 import React, { useEffect } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { Alert, PermissionsAndroid, Platform } from 'react-native';
-import { Button, Layout, Spinner, Text } from '@ui-kitten/components';
-import QRCode from 'react-native-qrcode-svg';
+import { Button, Layout, Spinner, StyleService, Text, useStyleSheet } from '@ui-kitten/components';
 import { myTheme } from '../app/custom-theme';
 import RNFS from 'react-native-fs';
 import { EdgeAgent } from 'src/agent/agent';
 import { agentConfig, genesis_txn, walletPath } from 'src/app/config';
-import { Agent } from 'aries-framework-javascript';
 import { useDispatch } from 'react-redux';
 import { addConnections } from 'src/navigation/connections/connectionsSlice'
 import { ConnectionState } from 'aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
 import * as Keychain from 'react-native-keychain';
 import agentModule from 'src/agent/agent';
 import * as crypto from 'crypto';
-import { IOS } from 'react-native-permissions/lib/typescript/constants';
 
 enum AgentState {
   INIT,
@@ -28,17 +25,18 @@ enum AgentState {
 export const HomeScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [ provisionState, setAgentState ] = React.useState<AgentState>(AgentState.INIT);
-  const [ inviteUrl, setInviteUrl ] = React.useState<string>('');
 
   const keylist = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$%^&*()-+'
 
-  // const onCreateInvite = async () => {
-  //   setAgentState(AgentState.CREATING_INVITE);
-  //   const invitationUrl = await agent.createInvitationUrl();
-  //   setInviteUrl(invitationUrl);
-  //   console.log('invitationUrl', invitationUrl);
-  //   setAgentState(AgentState.INVITE_CREATED);
-  // }
+  const themedStyles = StyleService.create({
+    safeArea: {
+      backgroundColor: '$background-basic-color-1',
+      flex: 1,
+      color: '$text-basic-color',
+    }
+  })
+
+  const styles = useStyleSheet(themedStyles);
 
   const connectToPool = async () => {
     const path = `${RNFS.DocumentDirectoryPath}/genesis.txn`;
@@ -116,44 +114,6 @@ export const HomeScreen = ({ navigation }) => {
     startup();
   }, []);
 
-  /*
-  switch (provisionState) {
-    case AgentState.UNPROVISIONED:
-      return (
-        <SafeAreaView style={{ flex: 1 }}>
-          <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Button onPress={onProvisionPress}>Provision Agent</Button>
-          </Layout>
-        </SafeAreaView>
-      );
-    case AgentState.PROVISIONING:
-    case AgentState.CREATING_INVITE:
-      return (
-        <SafeAreaView style={{ flex: 1 }}>
-          <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Spinner size='large' />
-          </Layout>
-        </SafeAreaView>
-      )
-    case AgentState.PROVISIONED:
-      return (
-        <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
-          <Layout style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
-            <Button onPress={onCreateInvite}>Create Invite</Button>
-            <Button onPress={onScanInvite}>Scan Invite</Button>
-          </Layout>
-        </SafeAreaView>
-      )
-    case AgentState.INVITE_CREATED:
-      return (
-        <SafeAreaView style={{ flex: 1 }}>
-          <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <QRCode color={myTheme['color-primary-500']} backgroundColor='white' value={inviteUrl} size={200} />
-          </Layout>
-        </SafeAreaView>
-      )
-  }
-  */
  
 const onShareSecret = () => {
   navigation.navigate('SecretShare', { key: agentConfig.walletCredentials.key });
@@ -173,6 +133,7 @@ const onCreateNewWallet = async (_delete: boolean) => {
     accessible: Keychain.ACCESSIBLE.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
     securityLevel: Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
   });
+  setAgentState(AgentState.INIT);
   await agentModule.init(agentConfig);
   setAgentState(AgentState.WALLET_FOUND_KEY_FOUND);
 }
@@ -180,7 +141,7 @@ const onCreateNewWallet = async (_delete: boolean) => {
 switch (provisionState) {
   case AgentState.INIT:
       return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={[styles.safeArea]}>
           <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Spinner size='large' />
           </Layout>
@@ -188,7 +149,7 @@ switch (provisionState) {
       )
     case AgentState.WALLET_FOUND:
       return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={[styles.safeArea]}>
           <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text>Wallet Found</Text>
             <Spinner size='large' />
@@ -197,7 +158,7 @@ switch (provisionState) {
       )
     case AgentState.WALLET_FOUND_KEY_FOUND:
       return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={[styles.safeArea]}>
           <Layout style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
             <Button onPress={onScanInvite}>Scan Invite</Button>
             <Button onPress={onShareSecret}>Share Secret</Button>
@@ -206,7 +167,7 @@ switch (provisionState) {
       )
     case AgentState.WALLET_FOUND_KEY_NOT_FOUND:
       return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={[styles.safeArea]}>
           <Layout style={{ padding: 10, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text>We found an existing wallet but the key doesn't exist in your keychain.</Text>
             <Button onPress={() => onCreateNewWallet(true)}>Create New Wallet</Button>
@@ -216,7 +177,7 @@ switch (provisionState) {
       )
     case AgentState.WALLET_NOT_FOUND:
       return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={[styles.safeArea]}>
           <Layout style={{ padding: 10, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Button onPress={() => onCreateNewWallet(false)}>Create New Wallet</Button>
           </Layout>
@@ -224,7 +185,7 @@ switch (provisionState) {
       )
     case AgentState.WRITE_PERMISSION_DENIED:
       return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={[styles.safeArea]}>
           <Layout style={{ padding: 10, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text>Cannot connect to the network without write permission</Text>
           </Layout>

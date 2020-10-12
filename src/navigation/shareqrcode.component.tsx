@@ -1,5 +1,5 @@
 import { current } from '@reduxjs/toolkit';
-import { Layout, Text } from '@ui-kitten/components';
+import { Layout, StyleService, Text, useStyleSheet } from '@ui-kitten/components';
 import React, { useEffect, useState } from 'react';
 import { Share } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
@@ -11,6 +11,16 @@ export const ShareQRCodeScreen = ({ navigation }) => {
   const values = navigation.getParam('values');
   const [value, setValue] = useState(values[0]);
   const [idx, setIdx] = useState(0);
+
+  const themedStyles = StyleService.create({
+    safeArea: {
+      backgroundColor: '$background-basic-color-1',
+      flex: 1,
+      color: '$text-basic-color',
+    }
+  })
+
+  const styles = useStyleSheet(themedStyles);
 
   const generateDataURL = () => {
     return new Promise<string>(resolve => {
@@ -41,7 +51,7 @@ export const ShareQRCodeScreen = ({ navigation }) => {
   }, [value]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={[styles.safeArea]}>
       <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text>Secret share {idx+1} of {values.length}</Text>
         <QRCode size={200} value={value} backgroundColor='white' getRef={c => (svg = c)}></QRCode>

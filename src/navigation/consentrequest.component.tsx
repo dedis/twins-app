@@ -1,7 +1,6 @@
 import React from 'react';
 import { Layout, TopNavigation, useStyleSheet, StyleService, TopNavigationAction, IconElement, Icon, Card, Button } from '@ui-kitten/components'
-import { useSafeArea } from 'react-native-safe-area-context';
-import { ImageStyle, View, Text, Image, StyleSheet, ToastAndroid } from 'react-native';
+import { ImageStyle, View, Text, Image, StyleSheet, ToastAndroid, SafeAreaView } from 'react-native';
 import rosterData from '../app/roster';
 import DarcInstance from '@dedis/cothority/byzcoin/contracts/darc-instance';
 import { Rule, SignerEd25519, IdentityDid } from '@dedis/cothority/darc';
@@ -17,7 +16,6 @@ import { bcID, signerID } from '../app/config';
 import agentModule from 'src/agent/agent';
 
 export const ConsentRequestScreen = ({ navigation, screenProps }) => {
-  const safeArea = useSafeArea();
 
   const { notificationState, setNotificationState } = screenProps;
   const { index } = navigation.getParam('data');
@@ -162,6 +160,11 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
       color: 'color-basic-500',
       marginTop: 15,
       borderTopWidth: 1,
+    },
+    safeArea: {
+      backgroundColor: '$background-basic-color-1',
+      flex: 1,
+      color: '$text-basic-color',
     }
   });
 
@@ -275,20 +278,22 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
   );
 
   return (
-    <Layout
-      style={[styles.container, { paddingTop: safeArea.top }]}
-      level='2'
-    >
-      <TopNavigation
-        alignment='center'
-        title='Consent Request'
-        leftControl={renderBackAction()}
-      />
-      <View style={{margin: 10, flex: 1, justifyContent: 'center', alignContent: 'center'}}>
-        {status === ConsentStatus.UNDECIDED && consentUndecided}
-        {status === ConsentStatus.DENIED && consentDenied}
-        {status === ConsentStatus.GRANTED && consentGranted}
-      </View>
-    </Layout>
+    <SafeAreaView style={[styles.safeArea]}>
+      <Layout
+        style={[styles.container]}
+        level='2'
+      >
+        <TopNavigation
+          alignment='center'
+          title='Consent Request'
+          leftControl={renderBackAction()}
+        />
+        <View style={{margin: 10, flex: 1, justifyContent: 'center', alignContent: 'center'}}>
+          {status === ConsentStatus.UNDECIDED && consentUndecided}
+          {status === ConsentStatus.DENIED && consentDenied}
+          {status === ConsentStatus.GRANTED && consentGranted}
+        </View>
+      </Layout>
+    </SafeAreaView>
   )
 }

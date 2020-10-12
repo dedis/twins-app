@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Button, Input, Layout, Modal, Select, SelectOption, SelectOptionType, Text } from "@ui-kitten/components"
+import { Button, Input, Layout, Modal, Select, SelectOption, SelectOptionType, StyleService, Text, useStyleSheet } from "@ui-kitten/components"
 import { useState } from "react"
 import { Alert, DocumentSelectionState, Share } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context"
@@ -11,6 +11,16 @@ export const SecretShareScreen = ({ navigation, screenProps }) => {
   const [ maxThresholdShares, setMaxThresholdShares ] = useState(maxTotalShares);
   const [totalShares, setTotalShares] = useState<SelectOption>();
   const [thresholdShares, setThresholdShares] = useState<SelectOption>();
+
+  const themedStyles = StyleService.create({
+    safeArea: {
+      backgroundColor: '$background-basic-color-1',
+      flex: 1,
+      color: '$text-basic-color',
+    }
+  })
+
+  const styles = useStyleSheet(themedStyles);
 
   const totalSharesOptions = Array.from({ length: maxTotalShares }, (_, i) => i+1).map(x => ({text: `${x}` }));
   const thresholdSharesOptions = Array.from({ length: maxThresholdShares }, (_, i) => i+1).map(x => ({ text: `${x} `}));
@@ -46,7 +56,7 @@ export const SecretShareScreen = ({ navigation, screenProps }) => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={[styles.safeArea]}>
       <Layout style={{ flex: 1, justifyContent: 'center' }}>
         <Text>Number of shares you want to split your key into</Text>
         <Select data={totalSharesOptions} selectedOption={totalShares} onSelect={ontotalSharesUpdate} />

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Layout, TopNavigation, useStyleSheet, StyleService, Card, Button, Spinner } from "@ui-kitten/components";
 import { View, Text, Linking, Alert, ToastAndroid } from "react-native";
-import { useSafeArea, SafeAreaView } from "react-native-safe-area-context";
 import logger from "aries-framework-javascript/build/lib/logger"
 import { EdgeAgent } from 'src/agent/agent';
 import { useSelector } from 'react-redux';
@@ -12,14 +11,19 @@ import { ConsentInformationRequestMessage } from 'src/agent/protocols/consent/Co
 import { plainToClass } from 'class-transformer';
 import { ConsentInformationResponseMessage } from 'src/agent/protocols/consent/ConsentInformationResponseMessage';
 import agentModule from 'src/agent/agent';
+import { SafeAreaView } from 'react-navigation';
 
 export const ConsentInformationRequestScreen = ({ navigation }) => {
-    const safeArea = useSafeArea();
     const [busy, setBusy] = React.useState<boolean>(false);
 
     const agent = agentModule.getAgent()!;
 
     const themedStyles = StyleService.create({
+        safeArea: {
+        backgroundColor: '$background-basic-color-1',
+        flex: 1,
+        color: '$text-basic-color',
+        },
         container: {
             flex: 1,
         },
@@ -37,6 +41,8 @@ export const ConsentInformationRequestScreen = ({ navigation }) => {
         }
     });
 
+    const styles = useStyleSheet(themedStyles);
+
     const notificationId = navigation.getParam('notificationId');
 
     const notifications = useSelector((state: RootState) => state.notifications);
@@ -53,7 +59,7 @@ export const ConsentInformationRequestScreen = ({ navigation }) => {
     }
 
     const waiting = (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={[styles.safeArea]}>
           <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Spinner size='large' />
           </Layout>
@@ -64,25 +70,25 @@ export const ConsentInformationRequestScreen = ({ navigation }) => {
         return waiting;
     }
 
-    const styles = useStyleSheet(themedStyles);
-
     const requested = (
-        <Layout
-            style={[styles.container, { paddingTop: safeArea.top }]}
-            level='2'
-        >
-            <TopNavigation
-                alignment='center'
-                title='Consent Information'
-            />
-            <View style={{ margin: 10, flex: 1, justifyContent: 'center', alignContent: 'center' }}>
-                <Card>
-                    <View>
-                        <Text style={styles.waiting}>Please wait while we get more information about the study.</Text>
-                    </View>
-                </Card>
-            </View>
-        </Layout>
+        <SafeAreaView style={[styles.safeArea]}>
+            <Layout
+                style={[styles.container]}
+                level='2'
+            >
+                <TopNavigation
+                    alignment='center'
+                    title='Consent Information'
+                />
+                <View style={{ margin: 10, flex: 1, justifyContent: 'center', alignContent: 'center' }}>
+                    <Card>
+                        <View>
+                            <Text style={styles.waiting}>Please wait while we get more information about the study.</Text>
+                        </View>
+                    </Card>
+                </View>
+            </Layout>
+        </SafeAreaView>
     );
 
     if (!!notification && notification.state == NotificationState.INFORMATION_REQUESTED) {
@@ -117,31 +123,33 @@ export const ConsentInformationRequestScreen = ({ navigation }) => {
     )
 
     return (
-        <Layout
-            style={[styles.container, { paddingTop: safeArea.top }]}
-            level='2'
-        >
-            <TopNavigation
-                alignment='center'
-                title='Consent Information'
-            />
-            <View style={{ margin: 10, flex: 1, justifyContent: 'center', alignContent: 'center' }}>
-                <Card style={{ marginBottom: 25 }}>
-                    <View>
-                        <Text style={styles.description}>{payload.description}</Text>
-                        {payload.moreInfoLink.length > 0 &&
-                            <View style={{ marginTop: 20 }}>
-                                <Text style={styles.description}>For more information, please visit:</Text>
-                                <Text style={styles.link} onPress={goToMoreInfo}>{payload.moreInfoLink}</Text>
-                            </View>
-                        }
-                    </View>
-                </Card>
-                { notification.state === NotificationState.CONSENT_GRANTED && granted}
-                { notification.state === NotificationState.CONSENT_DENIED && denied}
-                { notification.state === NotificationState.INFORMATION_PROVIDED && undecided}
-            </View>
+        <SafeAreaView style={[styles.safeArea]}>
+            <Layout
+                style={[styles.container, { paddingTop: safeArea.top }]}
+                level='2'
+            >
+                <TopNavigation
+                    alignment='center'
+                    title='Consent Information'
+                />
+                <View style={{ margin: 10, flex: 1, justifyContent: 'center', alignContent: 'center' }}>
+                    <Card style={{ marginBottom: 25 }}>
+                        <View>
+                            <Text style={styles.description}>{payload.description}</Text>
+                            {payload.moreInfoLink.length > 0 &&
+                                <View style={{ marginTop: 20 }}>
+                                    <Text style={styles.description}>For more information, please visit:</Text>
+                                    <Text style={styles.link} onPress={goToMoreInfo}>{payload.moreInfoLink}</Text>
+                                </View>
+                            }
+                        </View>
+                    </Card>
+                    { notification.state === NotificationState.CONSENT_GRANTED && granted}
+                    { notification.state === NotificationState.CONSENT_DENIED && denied}
+                    { notification.state === NotificationState.INFORMATION_PROVIDED && undecided}
+                </View>
 
-        </Layout>
+            </Layout>
+        </SafeAreaView>
     );
 }

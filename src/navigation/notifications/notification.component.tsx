@@ -4,9 +4,10 @@ import { LayoutItem } from '../../model/layout-item.model';
 import { MessageType as ConsentMessageType, ConsentStatus } from '../../agent/protocols/consent/messages';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/app/rootReducer';
-import { NavigatorType, NavigationContainer } from 'react-navigation';
+import { NavigatorType, NavigationContainer, SafeAreaView } from 'react-navigation';
 import { NotificationState } from '../notifications/notificationsSlice';
 import logger from 'aries-framework-javascript/build/lib/logger'
+import { StyleService, useStyleSheet } from '@ui-kitten/components';
 
 export interface Notification extends LayoutItem {
   route: string;
@@ -33,6 +34,16 @@ const stateToRouteMap = {
 
 export const NotificationScreen = ({navigation, screenProps}) => {
   const notifications = useSelector((state: RootState) => state.notifications);
+  const themedStyles = StyleService.create({
+    safeArea: {
+      backgroundColor: '$background-basic-color-2',
+      flex: 1,
+      color: '$text-basic-color',
+    }
+  })
+
+  const styles = useStyleSheet(themedStyles);
+
 
   const onItemPress = (index: number): void => {
     logger.logJson('stateToRouteMap', stateToRouteMap);
@@ -42,9 +53,11 @@ export const NotificationScreen = ({navigation, screenProps}) => {
   }
 
   return (
-    <LayoutList
-      data={notifications.items}
-      onItemPress={onItemPress}
-    />
+    <SafeAreaView style={[styles.safeArea]}>
+      <LayoutList
+        data={notifications.items}
+        onItemPress={onItemPress}
+      />
+    </SafeAreaView>
   );
 }

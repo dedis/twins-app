@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { useSafeArea, SafeAreaView } from "react-native-safe-area-context"
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "src/app/rootReducer";
 import { View, Text } from "react-native";
@@ -10,9 +9,9 @@ import logger from "aries-framework-javascript/build/lib/logger"
 import { ConsentInvitationMessage } from "src/agent/protocols/consent/ConsentInvitationMessage";
 import { plainToClass, classToPlain } from 'class-transformer';
 import agentModule, { EdgeAgent } from 'src/agent/agent';
+import { SafeAreaView } from 'react-navigation';
 
 export const ConsentInviteScreen = ({ navigation }) => {
-    const safeArea = useSafeArea();
 
     const agent = agentModule.getAgent();
     const notificationId = navigation.getParam('notificationId');
@@ -30,6 +29,11 @@ export const ConsentInviteScreen = ({ navigation }) => {
         description: {
             color: 'color-basic-500',
             fontSize: 15,
+        },
+        safeArea: {
+            backgroundColor: '$background-basic-color-1',
+            flex: 1,
+            color: '$text-basic-color',
         }
     });
     const styles = useStyleSheet(themedStyles);
@@ -64,7 +68,7 @@ export const ConsentInviteScreen = ({ navigation }) => {
     )
 
     const waiting = (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={[styles.safeArea]}>
           <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Spinner size='large' />
           </Layout>
@@ -76,23 +80,25 @@ export const ConsentInviteScreen = ({ navigation }) => {
     }
 
     return (
-        <Layout
-            style={[styles.container, { paddingTop: safeArea.top }]}
-            level='2'
-        >
-            <TopNavigation
-                alignment='center'
-                title='Consent Invitation'
-            />
-            <View style={{ margin: 10, flex: 1, justifyContent: 'center', alignContent: 'center' }}>
-                <Card style={{ marginBottom: 25 }}>
-                    <View>
-                        <Text style={styles.description}>{payload.synopsis}</Text>
-                    </View>
-                </Card>
-                { notification.state === NotificationState.INVITED && undecided}
-                { notification.state === NotificationState.INVITE_DENIED && denied}
-            </View>
-        </Layout>
+        <SafeAreaView style={[styles.safeArea]}>
+            <Layout
+                style={[styles.container]}
+                level='2'
+            >
+                <TopNavigation
+                    alignment='center'
+                    title='Consent Invitation'
+                />
+                <View style={{ margin: 10, flex: 1, justifyContent: 'center', alignContent: 'center' }}>
+                    <Card style={{ marginBottom: 25 }}>
+                        <View>
+                            <Text style={styles.description}>{payload.synopsis}</Text>
+                        </View>
+                    </Card>
+                    { notification.state === NotificationState.INVITED && undecided}
+                    { notification.state === NotificationState.INVITE_DENIED && denied}
+                </View>
+            </Layout>
+        </SafeAreaView>
     );
 }
