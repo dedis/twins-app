@@ -23,7 +23,7 @@ const App = () => {
   const appState = useRef(AppState.currentState);
 
   const _handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+    if (appState.current === 'background' && nextAppState === 'active') {
       console.log('App in foreground')
       if (agentModule.initialized()) {
         const agent = agentModule.getAgent()!;
