@@ -30,7 +30,7 @@ export const SecretShareScreen = ({ navigation, screenProps }) => {
   const onShare = () => {
     const numTotalShares = Number.parseInt((totalShares as SelectOptionType).text);
     const numThresholdShares = Number.parseInt((thresholdShares as SelectOptionType).text);
-    const shares = secrets.share(secrets.str2hex(key), numTotalShares, numThresholdShares);
+    const shares = secrets.share(key, numTotalShares, numThresholdShares);
     navigation.navigate('ShareQRCode', {values: shares});
   }
 

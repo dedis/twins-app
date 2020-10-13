@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { SafeAreaView } from 'react-navigation';
-import { Alert, PermissionsAndroid, Platform } from 'react-native';
+import { Alert, PermissionsAndroid, Platform, View } from 'react-native';
 import { Button, Layout, Spinner, StyleService, Text, useStyleSheet } from '@ui-kitten/components';
 import { myTheme } from '../app/custom-theme';
 import RNFS from 'react-native-fs';
@@ -11,7 +11,7 @@ import { addConnections } from 'src/navigation/connections/connectionsSlice'
 import { ConnectionState } from 'aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
 import * as Keychain from 'react-native-keychain';
 import agentModule from 'src/agent/agent';
-import * as crypto from 'crypto';
+import * as secrets from 'secrets.js-grempe';
 
 enum AgentState {
   INIT,
@@ -123,10 +123,7 @@ const onCreateNewWallet = async (_delete: boolean) => {
   if (_delete) {
     await RNFS.unlink(walletPath);
   }
-  agentConfig.walletCredentials.key = Array.from(crypto.randomFillSync(Buffer.alloc(15)))
-    .map((x) => keylist[x % keylist.length])
-    .join('');
-  
+  agentConfig.walletCredentials.key =  secrets.random(512);
   await Keychain.setGenericPassword(walletPath, agentConfig.walletCredentials.key, {
     accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET_OR_DEVICE_PASSCODE,
     authenticationType: Keychain.AUTHENTICATION_TYPE.DEVICE_PASSCODE_OR_BIOMETRICS,
@@ -136,6 +133,10 @@ const onCreateNewWallet = async (_delete: boolean) => {
   setAgentState(AgentState.INIT);
   await agentModule.init(agentConfig);
   setAgentState(AgentState.WALLET_FOUND_KEY_FOUND);
+}
+
+const onRecoverKey = () => {
+  navigation.navigate('RecoverSecret');
 }
 
 switch (provisionState) {
@@ -168,11 +169,13 @@ switch (provisionState) {
     case AgentState.WALLET_FOUND_KEY_NOT_FOUND:
       return (
         <SafeAreaView style={[styles.safeArea]}>
-          <Layout style={{ padding: 10, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Layout style={{ padding: 10, flex: 1, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
             <Text>We found an existing wallet but the key doesn't exist in your keychain.</Text>
-            <Button onPress={() => onCreateNewWallet(true)}>Create New Wallet</Button>
-            <Button>Recover Key</Button>
           </Layout>
+          <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
+            <Button onPress={() => onCreateNewWallet(true)}>Create New Wallet</Button>
+            <Button onPress={() => onRecoverKey()}>Recover Key</Button>
+          </View>
         </SafeAreaView>
       )
     case AgentState.WALLET_NOT_FOUND:
