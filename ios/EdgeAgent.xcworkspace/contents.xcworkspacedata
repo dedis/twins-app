@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:EdgeAgent.xcodeproj">
+      location = "group:/Users/narula/dev/twins/EdgeAgent/ios/TWINS.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
