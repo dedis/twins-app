@@ -19,7 +19,6 @@ import { CredentialScreen } from './notifications/credentialoffered.component';
 
 const connectionStack = createStackNavigator({
   Connections: ConnectionsScreen,
-  Chat: messaging,
 }, {
   initialRouteName: 'Connections',
   headerMode: 'none',
