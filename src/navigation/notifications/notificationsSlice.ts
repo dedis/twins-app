@@ -12,6 +12,9 @@ export enum NotificationState {
   INFORMATION_FAILURE,
   CONSENT_GRANTED,
   CONSENT_DENIED,
+  CREDENTIAL_OFFERED,
+  CREDENTIAL_REQUESTED,
+  CREDENTIAL_ISSUED,
 }
 
 export type NotificationItem<T extends NotificationPayload> = {

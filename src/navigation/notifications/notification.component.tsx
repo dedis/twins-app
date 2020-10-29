@@ -20,7 +20,7 @@ export interface Notification extends LayoutItem {
 }
 
 
-const { INVITED, INVITE_DENIED, INFORMATION_REQUESTED, INFORMATION_PROVIDED, INFORMATION_FAILURE, CONSENT_GRANTED, CONSENT_DENIED} = NotificationState;
+const { INVITED, INVITE_DENIED, INFORMATION_REQUESTED, INFORMATION_PROVIDED, INFORMATION_FAILURE, CONSENT_GRANTED, CONSENT_DENIED, CREDENTIAL_OFFERED, CREDENTIAL_REQUESTED, CREDENTIAL_ISSUED} = NotificationState;
 
 const stateToRouteMap = {
   0: 'ConsentInvite',
@@ -30,6 +30,9 @@ const stateToRouteMap = {
   4: 'ConsentInformationRequest',
   5: 'ConsentInformationRequest',
   6: 'ConsentInformationRequest',
+  7: 'Credential',
+  8: 'Credential',
+  9: 'Credential',
 }
 
 export const NotificationScreen = ({navigation, screenProps}) => {

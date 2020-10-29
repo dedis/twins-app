@@ -24,6 +24,11 @@ import { ConsentRecord } from './protocols/consent/ConsentRecord';
 import { ConsentModule } from './module/ConsentModule';
 import { ConsentInformationResponseHandler } from './handlers/consent/ConsentInformationResponseHandler';
 import { walletPath } from 'src/app/config'
+import { CredentialRecord } from 'aries-framework-javascript/build/lib/storage/CredentialRecord';
+import { CredentialState } from 'aries-framework-javascript/build/lib/protocols/credentials/CredentialState';
+import { addNotification, NotificationItem, NotificationState } from 'src/navigation/notifications/notificationsSlice';
+import { createSerializableStateInvariantMiddleware } from '@reduxjs/toolkit';
+import { classToPlain } from 'class-transformer';
 
 debug.enable('aries-framework-javascript');
 
@@ -126,11 +131,31 @@ class AgentModule {
 
     // Event Handlers
     const didExchangeEventEmitter = this.agent.didexchange.events()
+    // @ts-ignore
+    const credentialEventEmitter = this.agent.credentials.credentialService;
 
     this.agent.registerEventHandler(didExchangeEventEmitter, EventType.StateChanged, (event: StateChangeEvent) => {
       if (event.state == ConnectionState.COMPLETE) {
         logger.log('Established Connection');
         store.dispatch(fetchAndAddConnection(this.agent!, event.connectionId));
+      }
+    });
+
+    this.agent.registerEventHandler(credentialEventEmitter, EventType.StateChanged, async (event: any) => {
+      const { credential, prevState } : {credential: CredentialRecord, prevState: string } = event;
+      if (credential.state === CredentialState.OfferReceived) {
+        logger.log('Got credential offer');
+        const connection = await this.agent?.connections.find(credential.connectionId);
+        const serialized = classToPlain(credential)
+        console.log('credential', serialized);
+        const item: NotificationItem<{}> = {
+          title: 'Credential Offer',
+          description: `You've received a credential offer from ${connection?.theirDid}`,
+          id: credential.id,
+          state: NotificationState.CREDENTIAL_OFFERED,
+          payload: serialized,
+        };
+        store.dispatch(addNotification(item));
       }
     });
 

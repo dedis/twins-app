@@ -53,7 +53,7 @@ export const ShareQRCodeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={[styles.safeArea]}>
       <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>Secret share {idx+1} of {values.length}</Text>
+        <Text>Sharing QR Code for share {idx+1} of {values.length}</Text>
         <QRCode size={200} value={value} backgroundColor='white' getRef={c => (svg = c)}></QRCode>
       </Layout>
     </SafeAreaView>

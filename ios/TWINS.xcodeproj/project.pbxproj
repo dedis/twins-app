@@ -402,7 +402,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=/usr/local/opt/node@12/bin/node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
+			shellScript = "export NODE_BINARY=/usr/local/opt/node@12/bin/node\nexport SKIP_BUNDLING=true\n../node_modules/react-native/scripts/react-native-xcode.sh\n\n";
 		};
 		1BEF84EEEC4BAB03D0EB8882 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

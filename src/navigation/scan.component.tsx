@@ -39,7 +39,13 @@ export const ScanScreen = ({ navigation }) => {
     console.log('Accepting invitation...', e.data);
     const invitationJSON: {} = JSON.parse(e.data);
     const invite = plainToClass(ConnectionInvitationMessage, invitationJSON);
-    await (agent as Agent).didexchange.acceptInviteWithPublicDID(invite);
+    // @ts-ignore
+    if (invitationJSON['@type'].includes('connections/1.0')) {
+      await (agent as Agent).connections.acceptInviteWithPublicDID(invite);
+      console.log('Accepted invite');
+    } else {
+      await (agent as Agent).didexchange.acceptInviteWithPublicDID(invite);
+    }
     console.log('Done');
     navigation.navigate('Connections');
   }

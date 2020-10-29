@@ -15,6 +15,7 @@ import { SecretShareScreen } from './secretshare.component';
 import { ShareQRCodeScreen } from './shareqrcode.component';
 import { RecoverSecretScreen } from './recoversecret.component';
 import { ScanSharesScreen } from './scanshares.component';
+import { CredentialScreen } from './notifications/credentialoffered.component';
 
 const connectionStack = createStackNavigator({
   Connections: ConnectionsScreen,
@@ -40,6 +41,7 @@ const notificationStack = createStackNavigator({
   Notifications: NotificationScreen,
   ConsentInvite: ConsentInviteScreen,
   ConsentInformationRequest: ConsentInformationRequestScreen,
+  Credential: CredentialScreen,
 }, {
   initialRouteName: 'Notifications',
   headerMode: 'none'

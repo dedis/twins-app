@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { Alert, PermissionsAndroid, Platform, View } from 'react-native';
-import { Button, Layout, Spinner, StyleService, Text, useStyleSheet } from '@ui-kitten/components';
+import { Button, Input, Layout, Spinner, StyleService, Text, useStyleSheet } from '@ui-kitten/components';
 import { myTheme } from '../app/custom-theme';
 import RNFS from 'react-native-fs';
 import { EdgeAgent } from 'src/agent/agent';
@@ -25,8 +25,7 @@ enum AgentState {
 export const HomeScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [ provisionState, setAgentState ] = React.useState<AgentState>(AgentState.INIT);
-
-  const keylist = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$%^&*()-+'
+  const [ didSeed, setDidSeed ] = React.useState('');
 
   const themedStyles = StyleService.create({
     safeArea: {
@@ -65,6 +64,7 @@ export const HomeScreen = ({ navigation }) => {
         await RNFS.writeFile(path, genesis_txn);
       }
       await (agentModule.getAgent() as EdgeAgent).ledger.connect('buildernet', { genesis_txn: path });
+      console.log('Connected to pool');
     }
   }
 
@@ -95,7 +95,9 @@ export const HomeScreen = ({ navigation }) => {
             securityLevel: Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
           })
           if (key) {
-            agentConfig.walletCredentials.key = key.password;
+            const { walletKey, didSeed } = JSON.parse(key.password);
+            agentConfig.walletCredentials.key = walletKey;
+            agentConfig.publicDidSeed = didSeed
             await agentModule.init(agentConfig);
             await connectToPool();
             await inflateStateFromDB();
@@ -124,14 +126,18 @@ const onCreateNewWallet = async (_delete: boolean) => {
     await RNFS.unlink(walletPath);
   }
   agentConfig.walletCredentials.key =  secrets.random(512);
-  await Keychain.setGenericPassword(walletPath, agentConfig.walletCredentials.key, {
-    accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET_OR_DEVICE_PASSCODE,
-    authenticationType: Keychain.AUTHENTICATION_TYPE.DEVICE_PASSCODE_OR_BIOMETRICS,
-    accessible: Keychain.ACCESSIBLE.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
-    securityLevel: Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
+  agentConfig.publicDidSeed = didSeed;
+  await Keychain.setGenericPassword(walletPath,
+    JSON.stringify({walletKey: agentConfig.walletCredentials.key, didSeed }),
+    {
+      accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET_OR_DEVICE_PASSCODE,
+      authenticationType: Keychain.AUTHENTICATION_TYPE.DEVICE_PASSCODE_OR_BIOMETRICS,
+      accessible: Keychain.ACCESSIBLE.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
+      securityLevel: Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
   });
   setAgentState(AgentState.INIT);
   await agentModule.init(agentConfig);
+  await connectToPool();
   setAgentState(AgentState.WALLET_FOUND_KEY_FOUND);
 }
 
@@ -172,6 +178,11 @@ switch (provisionState) {
           <Layout style={{ padding: 10, flex: 1, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
             <Text>We found an existing wallet but the key doesn't exist in your keychain.</Text>
           </Layout>
+          <Input
+            value={didSeed}
+            label='DID Seed'
+            onChangeText={nextValue => setDidSeed(nextValue)}
+          />
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
             <Button onPress={() => onCreateNewWallet(true)}>Create New Wallet</Button>
             <Button onPress={() => onRecoverKey()}>Recover Key</Button>
@@ -182,6 +193,11 @@ switch (provisionState) {
       return (
         <SafeAreaView style={[styles.safeArea]}>
           <Layout style={{ padding: 10, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Input
+              value={didSeed}
+              label='DID Seed'
+              onChangeText={nextValue => setDidSeed(nextValue)}
+            />
             <Button onPress={() => onCreateNewWallet(false)}>Create New Wallet</Button>
           </Layout>
         </SafeAreaView>

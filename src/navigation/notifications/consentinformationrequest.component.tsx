@@ -20,9 +20,9 @@ export const ConsentInformationRequestScreen = ({ navigation }) => {
 
     const themedStyles = StyleService.create({
         safeArea: {
-        backgroundColor: '$background-basic-color-1',
-        flex: 1,
-        color: '$text-basic-color',
+            backgroundColor: '$background-basic-color-1',
+            flex: 1,
+            color: '$text-basic-color',
         },
         container: {
             flex: 1,
@@ -125,7 +125,7 @@ export const ConsentInformationRequestScreen = ({ navigation }) => {
     return (
         <SafeAreaView style={[styles.safeArea]}>
             <Layout
-                style={[styles.container, { paddingTop: safeArea.top }]}
+                style={[ styles.container ]}
                 level='2'
             >
                 <TopNavigation

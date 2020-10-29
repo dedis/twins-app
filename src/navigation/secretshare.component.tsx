@@ -57,13 +57,21 @@ export const SecretShareScreen = ({ navigation, screenProps }) => {
 
   return (
     <SafeAreaView style={[styles.safeArea]}>
-      <Layout style={{ flex: 1, justifyContent: 'center' }}>
-        <Text>Number of shares you want to split your key into</Text>
-        <Select data={totalSharesOptions} selectedOption={totalShares} onSelect={ontotalSharesUpdate} />
-        <Text>Threshold number of shares</Text>
-        <Select data={thresholdSharesOptions} selectedOption={thresholdShares} onSelect={onThresholdSharesUpdate}/>
+      <Layout style={{ flex: 1, justifyContent: 'center', margin: 10 }}>
+        <Text style={{ flex: 2 }}>
+          Secret sharing allows you to split the secret key protecting your
+          wallet into multiple parts, which you may share with trusted people in
+          the form of QR codes. You may reconstruct the secret key by combining
+          M, a threshold, out of N total shares.
+        </Text>
+        <Layout style={{ flex: 1 }}>
+          <Text>Number of shares you want to split your key into</Text>
+          <Select data={totalSharesOptions} selectedOption={totalShares} onSelect={ontotalSharesUpdate} />
+          <Text>Threshold number of shares</Text>
+          <Select data={thresholdSharesOptions} selectedOption={thresholdShares} onSelect={onThresholdSharesUpdate}/>
 
-        <Button onPress={onShare} disabled={disableShare()} >Share</Button>
+          <Button onPress={onShare} disabled={disableShare()} >Share</Button>
+        </Layout>
       </Layout>
     </SafeAreaView>
   )
