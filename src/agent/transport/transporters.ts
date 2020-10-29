@@ -1,8 +1,8 @@
-import { InboundTransporter, Agent, OutboundTransporter } from "aries-framework-javascript";
-import { OutboundPackage } from "aries-framework-javascript/build/lib/types";
-import { EdgeAgent } from "../agent";
-import logger from "aries-framework-javascript/build/lib/logger"
-import {mediatorURL } from 'src/app/config'
+import { InboundTransporter, Agent, OutboundTransporter } from 'aries-framework-javascript';
+import { OutboundPackage } from 'aries-framework-javascript/build/lib/types';
+import { EdgeAgent } from '../agent';
+import logger from 'aries-framework-javascript/build/lib/logger';
+import {mediatorURL } from 'src/app/config';
 
 export class RealTimeInboundTransporter implements InboundTransporter {
   state: number = 0;
@@ -17,7 +17,7 @@ export class RealTimeInboundTransporter implements InboundTransporter {
     logger.log('initializing signalRClient');
     try {
       await agent.signalRClientModule.init();
-    } catch(err) {
+    } catch (err) {
       logger.log('Error initializing signalR connection', err);
     }
   }

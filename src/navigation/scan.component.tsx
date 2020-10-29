@@ -1,14 +1,22 @@
 import React from 'react';
-import { Layout, TopNavigation, useStyleSheet, StyleService, TopNavigationAction, IconElement, Icon } from '@ui-kitten/components'
+import {
+  Layout,
+  TopNavigation,
+  useStyleSheet,
+  StyleService,
+  TopNavigationAction,
+  IconElement,
+  Icon,
+} from '@ui-kitten/components';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import { ImageStyle } from 'react-native';
-import { Agent } from 'aries-framework-javascript';
-import { ConnectionInvitationMessage } from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage';
-import { plainToClass } from "class-transformer";
+import {ImageStyle} from 'react-native';
+import {Agent} from 'aries-framework-javascript';
+import {ConnectionInvitationMessage} from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage';
+import {plainToClass} from 'class-transformer';
 import agentModule from 'src/agent/agent';
-import { SafeAreaView } from 'react-navigation';
+import {SafeAreaView} from 'react-navigation';
 
-export const ScanScreen = ({ navigation }) => {
+export const ScanScreen = ({navigation}) => {
   const themedStyles = StyleService.create({
     container: {
       flex: 1,
@@ -17,7 +25,7 @@ export const ScanScreen = ({ navigation }) => {
       backgroundColor: '$background-basic-color-1',
       flex: 1,
       color: '$text-basic-color',
-    }
+    },
   });
 
   const styles = useStyleSheet(themedStyles);
@@ -25,14 +33,16 @@ export const ScanScreen = ({ navigation }) => {
   const agent = agentModule.getAgent();
 
   const renderBackAction = (): React.ReactElement => {
-    return <TopNavigationAction
-      icon={BackIcon}
-      onPress={() => navigation.goBack()}
-    />
+    return (
+      <TopNavigationAction
+        icon={BackIcon}
+        onPress={() => navigation.goBack()}
+      />;
+    );
   };
 
   const BackIcon = (style: ImageStyle): IconElement => (
-    <Icon {...style} name='arrow-ios-back' />
+    <Icon {...style} name="arrow-ios-back" />
   );
 
   const onRead = async (e: any) => {
@@ -48,21 +58,18 @@ export const ScanScreen = ({ navigation }) => {
     }
     console.log('Done');
     navigation.navigate('Connections');
-  }
+  };
 
   return (
     <SafeAreaView style={[styles.safeArea]}>
-      <Layout
-        style={[styles.container]}
-        level='2'
-      >
+      <Layout style={[styles.container]} level="2">
         <TopNavigation
-          alignment='center'
-          title='Scan Invite'
+          alignment="center"
+          title="Scan Invite"
           leftControl={renderBackAction()}
         />
         <QRCodeScanner onRead={onRead} />
       </Layout>
     </SafeAreaView>
-  )
-}
+  );
+};

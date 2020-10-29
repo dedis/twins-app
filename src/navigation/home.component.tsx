@@ -7,7 +7,7 @@ import RNFS from 'react-native-fs';
 import { EdgeAgent } from 'src/agent/agent';
 import { agentConfig, genesis_txn, walletPath } from 'src/app/config';
 import { useDispatch } from 'react-redux';
-import { addConnections } from 'src/navigation/connections/connectionsSlice'
+import { addConnections } from 'src/navigation/connections/connectionsSlice';
 import { ConnectionState } from 'aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
 import * as Keychain from 'react-native-keychain';
 import agentModule from 'src/agent/agent';
@@ -32,14 +32,14 @@ export const HomeScreen = ({ navigation }) => {
       backgroundColor: '$background-basic-color-1',
       flex: 1,
       color: '$text-basic-color',
-    }
-  })
+    },
+  });
 
   const styles = useStyleSheet(themedStyles);
 
   const connectToPool = async () => {
     const path = `${RNFS.DocumentDirectoryPath}/genesis.txn`;
-    const exists = await RNFS.exists(path)
+    const exists = await RNFS.exists(path);
     switch (Platform.OS) {
       case 'android':
       if (!exists) {
@@ -66,7 +66,7 @@ export const HomeScreen = ({ navigation }) => {
       await (agentModule.getAgent() as EdgeAgent).ledger.connect('buildernet', { genesis_txn: path });
       console.log('Connected to pool');
     }
-  }
+  };
 
   // Inflate the state from wallet
   const inflateStateFromDB = async () => {
@@ -76,11 +76,11 @@ export const HomeScreen = ({ navigation }) => {
       description: `Connected using identifier: ${connection.did}`,
     }));
     dispatch(addConnections(items));
-  }
+  };
 
   const onScanInvite = () => {
     navigation.navigate('Scan');
-  }
+  };
 
   useEffect(() => {
     async function startup() {
@@ -93,20 +93,20 @@ export const HomeScreen = ({ navigation }) => {
             authenticationType: Keychain.AUTHENTICATION_TYPE.DEVICE_PASSCODE_OR_BIOMETRICS,
             accessible: Keychain.ACCESSIBLE.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
             securityLevel: Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
-          })
+          });
           if (key) {
             const { walletKey, didSeed } = JSON.parse(key.password);
             agentConfig.walletCredentials.key = walletKey;
-            agentConfig.publicDidSeed = didSeed
+            agentConfig.publicDidSeed = didSeed;
             await agentModule.init(agentConfig);
             await connectToPool();
             await inflateStateFromDB();
-            setAgentState(AgentState.WALLET_FOUND_KEY_FOUND)
+            setAgentState(AgentState.WALLET_FOUND_KEY_FOUND);
           } else {
             setAgentState(AgentState.WALLET_FOUND_KEY_NOT_FOUND);
           }
         } catch (error) {
-          console.log("Error accessing keychain", error);
+          console.log('Error accessing keychain', error);
         }
       } else {
         setAgentState(AgentState.WALLET_NOT_FOUND);
@@ -114,12 +114,12 @@ export const HomeScreen = ({ navigation }) => {
     }
 
     startup();
-  }, []);
+  }, [inflateStateFromDB]);
 
- 
+
 const onShareSecret = () => {
   navigation.navigate('SecretShare', { key: agentConfig.walletCredentials.key });
-}
+};
 
 const onCreateNewWallet = async (_delete: boolean) => {
   if (_delete) {
@@ -139,30 +139,30 @@ const onCreateNewWallet = async (_delete: boolean) => {
   await agentModule.init(agentConfig);
   await connectToPool();
   setAgentState(AgentState.WALLET_FOUND_KEY_FOUND);
-}
+};
 
 const onRecoverKey = () => {
   navigation.navigate('RecoverSecret');
-}
+};
 
 switch (provisionState) {
   case AgentState.INIT:
       return (
         <SafeAreaView style={[styles.safeArea]}>
           <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Spinner size='large' />
+            <Spinner size="large" />
           </Layout>
         </SafeAreaView>
-      )
+      );
     case AgentState.WALLET_FOUND:
       return (
         <SafeAreaView style={[styles.safeArea]}>
           <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text>Wallet Found</Text>
-            <Spinner size='large' />
+            <Spinner size="large" />
           </Layout>
         </SafeAreaView>
-      )
+      );
     case AgentState.WALLET_FOUND_KEY_FOUND:
       return (
         <SafeAreaView style={[styles.safeArea]}>
@@ -171,7 +171,7 @@ switch (provisionState) {
             <Button onPress={onShareSecret}>Share Secret</Button>
           </Layout>
         </SafeAreaView>
-      )
+      );
     case AgentState.WALLET_FOUND_KEY_NOT_FOUND:
       return (
         <SafeAreaView style={[styles.safeArea]}>
@@ -180,7 +180,7 @@ switch (provisionState) {
           </Layout>
           <Input
             value={didSeed}
-            label='DID Seed'
+            label="DID Seed"
             onChangeText={nextValue => setDidSeed(nextValue)}
           />
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
@@ -188,20 +188,20 @@ switch (provisionState) {
             <Button onPress={() => onRecoverKey()}>Recover Key</Button>
           </View>
         </SafeAreaView>
-      )
+      );
     case AgentState.WALLET_NOT_FOUND:
       return (
         <SafeAreaView style={[styles.safeArea]}>
           <Layout style={{ padding: 10, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Input
               value={didSeed}
-              label='DID Seed'
+              label="DID Seed"
               onChangeText={nextValue => setDidSeed(nextValue)}
             />
             <Button onPress={() => onCreateNewWallet(false)}>Create New Wallet</Button>
           </Layout>
         </SafeAreaView>
-      )
+      );
     case AgentState.WRITE_PERMISSION_DENIED:
       return (
         <SafeAreaView style={[styles.safeArea]}>
@@ -209,6 +209,6 @@ switch (provisionState) {
             <Text>Cannot connect to the network without write permission</Text>
           </Layout>
         </SafeAreaView>
-      )
+      );
  }
 };

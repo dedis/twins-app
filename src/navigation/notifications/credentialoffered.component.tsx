@@ -34,7 +34,7 @@ export const CredentialScreen = ({ navigation }) => {
             backgroundColor: '$background-basic-color-1',
             flex: 1,
             color: '$text-basic-color',
-        }
+        },
     });
 
     const styles = useStyleSheet(themedStyles);
@@ -45,12 +45,12 @@ export const CredentialScreen = ({ navigation }) => {
         await agentModule.getAgent()?.credentials.acceptCredential(credentialRecord);
         setCredentialState(CredentialState.CredentialIssued);
         setBusy(false);
-    }
+    };
 
     const waiting = (
         <SafeAreaView style={[styles.safeArea]}>
           <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Spinner size='large' />
+            <Spinner size="large" />
           </Layout>
         </SafeAreaView>
     );
@@ -63,18 +63,18 @@ export const CredentialScreen = ({ navigation }) => {
 
     for (let i = 0; i < offer.credentialPreview.attributes.length; i++) {
         const attrib = offer.credentialPreview.attributes[i];
-        attributes.push(<Text style={{ paddingVertical: 10 }} key={i}>{attrib.name}: {attrib.value}</Text>)
+        attributes.push(<Text style={{ paddingVertical: 10 }} key={i}>{attrib.name}: {attrib.value}</Text>);
     }
 
     return (
         <SafeAreaView style={[styles.safeArea]}>
             <Layout
                 style={[styles.container]}
-                level='2'
+                level="2"
             >
                 <TopNavigation
-                    alignment='center'
-                    title='Credential Offer'
+                    alignment="center"
+                    title="Credential Offer"
                 />
                 <View style={{ margin: 10, flex: 1, justifyContent: 'center', alignContent: 'center' }}>
                     <Card style={{ marginBottom: 25 }}>
@@ -89,4 +89,4 @@ export const CredentialScreen = ({ navigation }) => {
             </Layout>
         </SafeAreaView>
     );
-}
+};

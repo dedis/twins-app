@@ -3,10 +3,10 @@ import debug from 'debug';
 // @ts-ignore
 import indy from 'rn-indy-sdk';
 
-import { RealTimeInboundTransporter, HTTPOutboundTransporter } from "./transport/transporters";
-import { InitConfig } from "aries-framework-javascript/build/lib/types";
-import { mediatorURL } from "../app/config";
-import { Agent, InboundTransporter, OutboundTransporter } from "aries-framework-javascript";
+import { RealTimeInboundTransporter, HTTPOutboundTransporter } from './transport/transporters';
+import { InitConfig } from 'aries-framework-javascript/build/lib/types';
+import { mediatorURL } from '../app/config';
+import { Agent, InboundTransporter, OutboundTransporter } from 'aries-framework-javascript';
 import { ConsentService } from './protocols/consent/ConsentService';
 import { EventEmitter } from 'events';
 import { EventType, StateChangeEvent, ExchangeService } from 'aries-framework-javascript/build/lib/protocols/didexchange/ExchangeService';
@@ -15,7 +15,7 @@ import { MessageRepository } from 'aries-framework-javascript/build/lib/storage/
 import { SignalRClientModule } from './module/SignalRClientModule';
 import { SignalRRoutingModule } from './module/SignalRoutingModule';
 import { CustomConsumerRoutingService } from './protocols/routing/ConsumerRoutingService';
-import logger from "aries-framework-javascript/build/lib/logger"
+import logger from 'aries-framework-javascript/build/lib/logger';
 import { ConnectionState } from 'aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
 import store from 'src/app/store';
 import { ConsentInvitationHandler } from './handlers/consent/ConsentInvitationHandler';
@@ -23,7 +23,7 @@ import { Repository } from 'aries-framework-javascript/build/lib/storage/Reposit
 import { ConsentRecord } from './protocols/consent/ConsentRecord';
 import { ConsentModule } from './module/ConsentModule';
 import { ConsentInformationResponseHandler } from './handlers/consent/ConsentInformationResponseHandler';
-import { walletPath } from 'src/app/config'
+import { walletPath } from 'src/app/config';
 import { CredentialRecord } from 'aries-framework-javascript/build/lib/storage/CredentialRecord';
 import { CredentialState } from 'aries-framework-javascript/build/lib/protocols/credentials/CredentialState';
 import { addNotification, NotificationItem, NotificationState } from 'src/navigation/notifications/notificationsSlice';
@@ -60,9 +60,9 @@ export class EdgeAgent extends Agent {
     this.dispatcher.handlers = [];
     this.registerHandlers();
     this.registerModules();
-    logger.log('done with constructor')
+    logger.log('done with constructor');
     // @ts-ignore
-    logger.log('handlers', this.dispatcher.handlers)
+    logger.log('handlers', this.dispatcher.handlers);
   }
 
   protected registerHandlers() {
@@ -72,8 +72,8 @@ export class EdgeAgent extends Agent {
   }
 
   public registerEventHandler(eventEmitter: EventEmitter, eventType: string, handler: (...args: any) => void) {
-    this.eventEmitters.add(eventEmitter)
-    eventEmitter.on(eventType, handler)
+    this.eventEmitters.add(eventEmitter);
+    eventEmitter.on(eventType, handler);
   }
 
   public destroyEventHandlers() {
@@ -99,7 +99,7 @@ export class EdgeAgent extends Agent {
       this.messageReceiver.envelopeService,
       this.messageReceiver,
       this.agentConfig,
-    )
+    );
     this.consentModule = new ConsentModule(this.consentService, this.messageSender);
   }
 }
@@ -130,7 +130,7 @@ class AgentModule {
     );
 
     // Event Handlers
-    const didExchangeEventEmitter = this.agent.didexchange.events()
+    const didExchangeEventEmitter = this.agent.didexchange.events();
     // @ts-ignore
     const credentialEventEmitter = this.agent.credentials.credentialService;
 
@@ -146,7 +146,7 @@ class AgentModule {
       if (credential.state === CredentialState.OfferReceived) {
         logger.log('Got credential offer');
         const connection = await this.agent?.connections.find(credential.connectionId);
-        const serialized = classToPlain(credential)
+        const serialized = classToPlain(credential);
         console.log('credential', serialized);
         const item: NotificationItem<{}> = {
           title: 'Credential Offer',

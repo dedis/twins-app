@@ -1,10 +1,10 @@
-import { Connection, Agent } from "aries-framework-javascript";
+import { Connection, Agent } from 'aries-framework-javascript';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
-import { createOutboundMessage } from "aries-framework-javascript/build/lib/protocols/helpers";
+import { createOutboundMessage } from 'aries-framework-javascript/build/lib/protocols/helpers';
 import async from 'async';
-import { EdgeAgent } from "../agent";
-import { AgentMessage } from "aries-framework-javascript/build/lib/agent/AgentMessage";
-import { IsString } from "class-validator";
+import { EdgeAgent } from '../agent';
+import { AgentMessage } from 'aries-framework-javascript/build/lib/agent/AgentMessage';
+import { IsString } from 'class-validator';
 
 export class SignalRClient {
     agent: EdgeAgent
@@ -18,7 +18,7 @@ export class SignalRClient {
             .withUrl(`${agent.getAgencyUrl()}/hub`)
             .configureLogging(LogLevel.Debug)
             .build();
-        this.registerHandlers()
+        this.registerHandlers();
     }
 
     async init() {
@@ -29,7 +29,7 @@ export class SignalRClient {
 
     close() {
         if (this.connection) {
-            return this.connection.stop()
+            return this.connection.stop();
         }
     }
 

@@ -1,39 +1,73 @@
 import React from 'react';
-import { Layout, TopNavigation, useStyleSheet, StyleService, TopNavigationAction, IconElement, Icon, Card, Button } from '@ui-kitten/components'
-import { ImageStyle, View, Text, Image, StyleSheet, ToastAndroid, SafeAreaView } from 'react-native';
+import {
+  Layout,
+  TopNavigation,
+  useStyleSheet,
+  StyleService,
+  TopNavigationAction,
+  IconElement,
+  Icon,
+  Card,
+  Button,
+} from '@ui-kitten/components';
+import {
+  ImageStyle,
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ToastAndroid,
+  SafeAreaView,
+} from 'react-native';
 import rosterData from '../app/roster';
 import DarcInstance from '@dedis/cothority/byzcoin/contracts/darc-instance';
-import { Rule, SignerEd25519, IdentityDid } from '@dedis/cothority/darc';
-import { Roster } from '@dedis/cothority/network/proto';
+import {Rule, SignerEd25519, IdentityDid} from '@dedis/cothority/darc';
+import {Roster} from '@dedis/cothority/network/proto';
 import ByzCoinRPC from '@dedis/cothority/byzcoin/byzcoin-rpc';
-import { createOutboundMessage } from 'aries-framework-javascript/build/lib/protocols/helpers';
-import { Agent } from 'aries-framework-javascript';
-import { createConsentResponse, ConsentStatus } from '../agent/protocols/consent/messages';
-import { SkipchainRPC, SkipBlock } from '@dedis/cothority/skipchain';
-import { GetUpdateChain, GetUpdateChainReply } from '@dedis/cothority/skipchain/proto';
-import { RosterWSConnection } from '@dedis/cothority/network/connection';
-import { bcID, signerID } from '../app/config';
+import {createOutboundMessage} from 'aries-framework-javascript/build/lib/protocols/helpers';
+import {Agent} from 'aries-framework-javascript';
+import {
+  createConsentResponse,
+  ConsentStatus,
+} from '../agent/protocols/consent/messages';
+import {SkipchainRPC, SkipBlock} from '@dedis/cothority/skipchain';
+import {
+  GetUpdateChain,
+  GetUpdateChainReply,
+} from '@dedis/cothority/skipchain/proto';
+import {RosterWSConnection} from '@dedis/cothority/network/connection';
+import {bcID, signerID} from '../app/config';
 import agentModule from 'src/agent/agent';
 
-export const ConsentRequestScreen = ({ navigation, screenProps }) => {
-
-  const { notificationState, setNotificationState } = screenProps;
-  const { index } = navigation.getParam('data');
-  const { documentDarc, publicDid, orgName, studyName, verkey, status } = notificationState[index];
+export const ConsentRequestScreen = ({navigation, screenProps}) => {
+  const {notificationState, setNotificationState} = screenProps;
+  const {index} = navigation.getParam('data');
+  const {
+    documentDarc,
+    publicDid,
+    orgName,
+    studyName,
+    verkey,
+    status,
+  } = notificationState[index];
 
   const agent = agentModule.getAgent();
 
-  const [ consentActionState, setConsentActionState ] = React.useState<boolean>(false);
+  const [consentActionState, setConsentActionState] = React.useState<boolean>(
+    false,
+  );
 
   const renderBackAction = (): React.ReactElement => {
-    return <TopNavigationAction
-      icon={BackIcon}
-      onPress={() => navigation.goBack()}
-    />
+    return (
+      <TopNavigationAction
+        icon={BackIcon}
+        onPress={() => navigation.goBack()}
+      />;
+    );
   };
 
   const BackIcon = (style: ImageStyle): IconElement => (
-    <Icon {...style} name='arrow-ios-back' />
+    <Icon {...style} name="arrow-ios-back" />
   );
 
   const onGrantConsent = async () => {
@@ -43,59 +77,77 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
       console.log('got roster');
       const genesisBlock = Buffer.from(bcID, 'hex');
       const skipchainRpc = new SkipchainRPC(roster);
-      const latestBlock = await getLatestBlock(skipchainRpc, genesisBlock, false);
-      console.log(`LatestBlock id: ${latestBlock.hash.toString('hex')}`)
+      const latestBlock = await getLatestBlock(
+        skipchainRpc,
+        genesisBlock,
+        false,
+      );
+      console.log(`LatestBlock id: ${latestBlock.hash.toString('hex')}`);
       console.log('Getting rpc instance');
       const byzcoinRPC = await ByzCoinRPC.fromByzcoin(
         roster,
         genesisBlock,
         undefined,
         undefined,
-        latestBlock
+        latestBlock,
       );
       console.log('Got rpc instance');
-      const darc = await DarcInstance.fromByzcoin(byzcoinRPC, Buffer.from(documentDarc, 'hex'));
+      const darc = await DarcInstance.fromByzcoin(
+        byzcoinRPC,
+        Buffer.from(documentDarc, 'hex'),
+      );
       const newDarc = darc.darc.evolve();
       console.log('evolved darc in memory');
-      const identityProps = { did: publicDid }; // Other things not required since only toString is called on the identity
+      const identityProps = {did: publicDid}; // Other things not required since only toString is called on the identity
       const identity = new IdentityDid(identityProps);
       // await identity.init(); // no need to init
       newDarc.rules.appendToRule('spawn:calypsoRead', identity, Rule.OR);
       const signer = SignerEd25519.fromBytes(Buffer.from(signerID, 'hex'));
       console.log('created signer');
       await darc.evolveDarcAndWait(newDarc, [signer], 100);
-      console.log(`Evolved darc and added ${publicDid} to spawn:calypsoRead rule`);
+      console.log(
+        `Evolved darc and added ${publicDid} to spawn:calypsoRead rule`,
+      );
 
       const connection = (agent as Agent).findConnectionByMyKey(verkey);
       if (!connection) {
         throw new Error(`connection with our verkey ${verkey} does not exist`);
       }
-      await agent.context.messageSender.sendMessage(createOutboundMessage(
-        connection,
-        createConsentResponse(documentDarc, ConsentStatus.GRANTED)
-      ));
+      await agent.context.messageSender.sendMessage(
+        createOutboundMessage(
+          connection,
+          createConsentResponse(documentDarc, ConsentStatus.GRANTED),
+        ),
+      );
       console.log('Sent consent response');
       setNotificationState(prevNotifications => [
         ...prevNotifications.slice(0, index),
         {
           ...prevNotifications[index],
-          status: ConsentStatus.GRANTED
+          status: ConsentStatus.GRANTED,
         },
-        ...prevNotifications.slice(index+1, prevNotifications.length)
+        ...prevNotifications.slice(index + 1, prevNotifications.length),
       ]);
     } catch (e) {
       console.log(e);
     }
-  }
+  };
 
-  const getLatestBlock = async (tthis: SkipchainRPC, latestID: Buffer, verify: boolean = true) => {
+  const getLatestBlock = async (
+    tthis: SkipchainRPC,
+    latestID: Buffer,
+    verify: boolean = true,
+  ) => {
     const blocks: SkipBlock[] = [];
     // Run as long as there is a new blockID to be checked
-    for (let previousID = Buffer.alloc(0); !previousID.equals(latestID);) {
+    for (let previousID = Buffer.alloc(0); !previousID.equals(latestID); ) {
       previousID = latestID;
-      const req = new GetUpdateChain({ latestID });
+      const req = new GetUpdateChain({latestID});
       // @ts-ignore
-      const ret = await tthis.conn.send<GetUpdateChainReply>(req, GetUpdateChainReply);
+      const ret = await tthis.conn.send<GetUpdateChainReply>(
+        req,
+        GetUpdateChainReply,
+      );
       const newBlocks = ret.update;
       if (newBlocks.length === 0) {
         // @ts-ignore
@@ -104,7 +156,7 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
           tthis.conn.invalidate(tthis.conn.getURL());
           continue;
         } else {
-          console.warn("Would need a RosterWSConnection to continue");
+          console.warn('Would need a RosterWSConnection to continue');
           break;
         }
       }
@@ -134,27 +186,29 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
           tthis.conn.setRoster(fl.newRoster);
         } else {
           // @ts-ignore
-          tthis.conn = new RosterWSConnection(fl.newRoster, SkipchainRPC.serviceName);
+          tthis.conn = new RosterWSConnection(
+            fl.newRoster,
+            SkipchainRPC.serviceName,
+          );
         }
       }
     }
     return blocks.pop() as SkipBlock;
-  }
+  };
 
   const themedStyles = StyleService.create({
     container: {
       flex: 1,
     },
-    button: {
-    },
+    button: {},
     cardText: {
       paddingBottom: 10,
       marginBottom: 10,
-      color: 'color-basic-500'
+      color: 'color-basic-500',
     },
     headerText: {
       padding: 25,
-      color: 'color-basic-500'
+      color: 'color-basic-500',
     },
     currentStatusContainer: {
       color: 'color-basic-500',
@@ -165,7 +219,7 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
       backgroundColor: '$background-basic-color-1',
       flex: 1,
       color: '$text-basic-color',
-    }
+    },
   });
 
   const styles = useStyleSheet(themedStyles);
@@ -173,12 +227,22 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
   const Header = () => (
     <View>
       <View style={{flexDirection: 'row'}}>
-        <Text style={{ ...styles.headerText, paddingBottom: 0}}>🤒    ➡️</Text>
-        <Image style={{marginTop: 25, marginLeft: -12, width: 45, height: 15, alignSelf: 'center'}} source={require('../res/images/epfl.png')} />
+        <Text style={{...styles.headerText, paddingBottom: 0}}>🤒 ➡️</Text>
+        <Image
+          style={{
+            marginTop: 25,
+            marginLeft: -12,
+            width: 45,
+            height: 15,
+            alignSelf: 'center',
+          }}
+          source={require('../res/images/epfl.png')}
+        />
       </View>
       <Text style={styles.headerText}>
-        <Text style={{fontWeight: 'bold'}}>{orgName}</Text> invites you to share your biological and digital samples
-        in order to participate in the study: <Text style={{fontWeight: 'bold'}}>{studyName}</Text>
+        <Text style={{fontWeight: 'bold'}}>{orgName}</Text> invites you to share
+        your biological and digital samples in order to participate in the
+        study: <Text style={{fontWeight: 'bold'}}>{studyName}</Text>
       </Text>
     </View>
   );
@@ -189,36 +253,42 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
     if (!connection) {
       throw new Error(`connection with our verkey ${verkey} does not exist`);
     }
-    await agent.context.messageSender.sendMessage(createOutboundMessage(
-      connection,
-      createConsentResponse(documentDarc, ConsentStatus.DENIED)
-    ));
+    await agent.context.messageSender.sendMessage(
+      createOutboundMessage(
+        connection,
+        createConsentResponse(documentDarc, ConsentStatus.DENIED),
+      ),
+    );
     setNotificationState(prevNotifications => [
       ...prevNotifications.slice(0, index),
       {
         ...prevNotifications[index],
         status: ConsentStatus.DENIED,
       },
-      ...prevNotifications.slice(index+1, prevNotifications.length)
+      ...prevNotifications.slice(index + 1, prevNotifications.length),
     ]);
-  }
+  };
 
   const onRevokeConsent = () => {
-    ToastAndroid.showWithGravity('TODO', ToastAndroid.SHORT, ToastAndroid.BOTTOM)
-  }
+    ToastAndroid.showWithGravity(
+      'TODO',
+      ToastAndroid.SHORT,
+      ToastAndroid.BOTTOM,
+    );
+  };
 
   const Footer = () => (
     <View>
       <Text style={styles.cardText}>
-        If you do not consent, no information will be shared about you. {orgName} will know
-        that some patients have declined to share their data, but will not know your
-        identity.
+        If you do not consent, no information will be shared about you.{' '}
+        {orgName} will know that some patients have declined to share their
+        data, but will not know your identity.
       </Text>
       <Button
         disabled={status !== ConsentStatus.UNDECIDED || consentActionState}
         style={styles.button}
         onPress={onDenyConsent}
-        size='small' status='danger'>
+        size="small" status="danger">
         NO THANKS
       </Button>
     </View>
@@ -228,19 +298,19 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
     <Card header={Header} footer={Footer}>
       <View>
         <Text style={styles.cardText}>
-          When you consent to share your data with {orgName}, your biological samples and data about you
-          will be securely released to them.
-          {"\n\n"}
-          You can revoke this consent at any time, and {orgName} will be notified and is required to destroy
-          data about you and samples from you.
+          When you consent to share your data with {orgName}, your biological
+          samples and data about you will be securely released to them.
+          {'\n\n'}
+          You can revoke this consent at any time, and {orgName} will be
+          notified and is required to destroy data about you and samples from
+          you.
         </Text>
         <Button
-          disabled={ status !== ConsentStatus.UNDECIDED || consentActionState }
+          disabled={status !== ConsentStatus.UNDECIDED || consentActionState}
           style={styles.button}
-          size='small'
-          status='primary'
-          onPress={onGrantConsent}
-        >
+          size="small"
+          status="primary"
+          onPress={onGrantConsent}>
           I CONSENT
         </Button>
       </View>
@@ -257,10 +327,9 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
         </Text>
         <Button
           style={styles.button}
-          size='small'
-          status='primary'
-          onPress={onRevokeConsent}
-        >
+          size="small"
+          status="primary"
+          onPress={onRevokeConsent}>
           REVOKE CONSENT
         </Button>
       </View>
@@ -279,21 +348,24 @@ export const ConsentRequestScreen = ({ navigation, screenProps }) => {
 
   return (
     <SafeAreaView style={[styles.safeArea]}>
-      <Layout
-        style={[styles.container]}
-        level='2'
-      >
+      <Layout style={[styles.container]} level="2">
         <TopNavigation
-          alignment='center'
-          title='Consent Request'
+          alignment="center"
+          title="Consent Request"
           leftControl={renderBackAction()}
         />
-        <View style={{margin: 10, flex: 1, justifyContent: 'center', alignContent: 'center'}}>
+        <View
+          style={{
+            margin: 10,
+            flex: 1,
+            justifyContent: 'center',
+            alignContent: 'center',
+          }}>
           {status === ConsentStatus.UNDECIDED && consentUndecided}
           {status === ConsentStatus.DENIED && consentDenied}
           {status === ConsentStatus.GRANTED && consentGranted}
         </View>
       </Layout>
     </SafeAreaView>
-  )
-}
+  );
+};

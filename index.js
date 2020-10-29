@@ -4,7 +4,8 @@
 
 delete global.URLSearchParams;
 delete global.URL;
-const pollyfillGlobal = require('react-native/Libraries/Utilities/PolyfillFunctions').polyfillGlobal;
+const pollyfillGlobal = require('react-native/Libraries/Utilities/PolyfillFunctions')
+  .polyfillGlobal;
 pollyfillGlobal('URL', () => require('whatwg-url').URL);
 pollyfillGlobal('URLSearchParams', () => require('whatwg-url').URLSearchParams);
 global.URL = require('whatwg-url').URL;

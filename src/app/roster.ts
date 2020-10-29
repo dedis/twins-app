@@ -1,5 +1,4 @@
-const roster =
-`
+const roster = `
 [[servers]]
   Address = "tls://conode-cfch.twins-project.org:79"
   Suite = "Ed25519"
@@ -65,6 +64,6 @@ const roster =
     [servers.Services.Skipchain]
       Public = "6599eea389ccdc3afe9d584d6f2a0e34da99925a4a749bd7fc25d488768067d31b059ba3f2d02f7d94ed5f48ba9e2739867272dd715678fd8eeeaac8b538663281c0efd95d283b24998c5d5d3dd8eb18166c9020f09f31a02db00209519eaf34437b597b02175553c624d88300afc3cd80e487dcb5eca6272a162faf47563b6f"
       Suite = "bn256.adapter"
-`
+`;
 
 export default roster;

@@ -1,12 +1,12 @@
-import { AgentMessage } from "aries-framework-javascript/build/lib/agent/AgentMessage";
-import { Equals, IsUUID } from "class-validator";
+import {AgentMessage} from 'aries-framework-javascript/build/lib/agent/AgentMessage';
+import {Equals, IsUUID} from 'class-validator';
 
 export interface AddRouteMessageOptions {
-    routeDestination: Verkey
+  routeDestination: Verkey;
 }
 
 export enum MessageType {
-    AddRoute = 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/basic-routing/1.0/add-route',
+  AddRoute = 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/basic-routing/1.0/add-route',
 }
 
 export class AddRouteMessage extends AgentMessage {
@@ -24,7 +24,7 @@ export class AddRouteMessage extends AgentMessage {
   public readonly type = AddRouteMessage.type;
   public static readonly type = MessageType.AddRoute;
 
-  public routeDestination: Verkey
+  public routeDestination: Verkey;
 
-  public id: string
+  public id: string;
 }

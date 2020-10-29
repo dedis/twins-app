@@ -1,4 +1,4 @@
-import { Connection } from '../../src/lib';
+import {Connection} from '../../src/lib';
 
 declare global {
   namespace jest {

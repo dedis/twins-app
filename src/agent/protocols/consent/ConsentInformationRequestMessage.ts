@@ -1,10 +1,9 @@
-
-import { AgentMessage } from "aries-framework-javascript/build/lib/agent/AgentMessage";
-import { MessageType } from "./messages";
+import {AgentMessage} from 'aries-framework-javascript/build/lib/agent/AgentMessage';
+import {MessageType} from './messages';
 
 export interface ConsentRequestMessageOptions {
-    id?: string
-    cohortID: string
+  id?: string;
+  cohortID: string;
 }
 
 export class ConsentInformationRequestMessage extends AgentMessage {
@@ -16,16 +15,15 @@ export class ConsentInformationRequestMessage extends AgentMessage {
   public constructor(options: ConsentRequestMessageOptions) {
     super();
     if (options) {
-        this.id = options.id || this.generateId();
-        this.cohortID = options.cohortID;
+      this.id = options.id || this.generateId();
+      this.cohortID = options.cohortID;
     }
   }
 
   public readonly type = ConsentInformationRequestMessage.type;
   public static readonly type = MessageType.RequestMessage;
 
+  public id!: string;
 
-  public id!: string
-
-  public cohortID!: string
+  public cohortID!: string;
 }

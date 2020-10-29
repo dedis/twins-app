@@ -1,12 +1,12 @@
-import { HubConnection, HubConnectionBuilder, LogLevel, HttpTransportType } from "@microsoft/signalr";
-import { ProvisioningService } from "aries-framework-javascript/build/lib/agent/ProvisioningService";
-import { AgentConfig } from "aries-framework-javascript/build/lib/agent/AgentConfig";
-import { createOutboundMessage } from "aries-framework-javascript/build/lib/protocols/helpers";
-import { AuthorizeResponseMessage } from '../protocols/routing/AuthorizeResponseMessage'
-import { ConnectionService } from "aries-framework-javascript/build/lib/protocols/connections/ConnectionService";
-import { EnvelopeService } from "aries-framework-javascript/build/lib/agent/EnvelopeService";
-import { MessageReceiver } from "aries-framework-javascript/build/lib/agent/MessageReceiver";
-import logger from "aries-framework-javascript/build/lib/logger";
+import { HubConnection, HubConnectionBuilder, LogLevel, HttpTransportType } from '@microsoft/signalr';
+import { ProvisioningService } from 'aries-framework-javascript/build/lib/agent/ProvisioningService';
+import { AgentConfig } from 'aries-framework-javascript/build/lib/agent/AgentConfig';
+import { createOutboundMessage } from 'aries-framework-javascript/build/lib/protocols/helpers';
+import { AuthorizeResponseMessage } from '../protocols/routing/AuthorizeResponseMessage';
+import { ConnectionService } from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionService';
+import { EnvelopeService } from 'aries-framework-javascript/build/lib/agent/EnvelopeService';
+import { MessageReceiver } from 'aries-framework-javascript/build/lib/agent/MessageReceiver';
+import logger from 'aries-framework-javascript/build/lib/logger';
 
 export class SignalRClientModule {
     provisioningService: ProvisioningService
@@ -24,13 +24,13 @@ export class SignalRClientModule {
             .withUrl(`${agentConfig.agencyUrl}/hub`, HttpTransportType.LongPolling)
             .configureLogging(LogLevel.Debug)
             .build();
-        this.registerHandlers()
+        this.registerHandlers();
         this.connection.onclose((err) => {
-            logger.log("Connection closed", err);
+            logger.log('Connection closed', err);
         });
         this.connection.onreconnected((cid) => {
-            logger.log("Connection restablished");
-        })
+            logger.log('Connection restablished');
+        });
     }
 
     async init() {
