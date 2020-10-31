@@ -37,7 +37,7 @@ export const ScanScreen = ({navigation}) => {
       <TopNavigationAction
         icon={BackIcon}
         onPress={() => navigation.goBack()}
-      />;
+      />
     );
   };
 

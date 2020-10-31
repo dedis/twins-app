@@ -1,5 +1,5 @@
 import {AgentMessage} from 'aries-framework-javascript/build/lib/agent/AgentMessage';
-import {IsString, Equals} from 'class-validator';
+import {IsString} from 'class-validator';
 
 export enum MessageType {
   AuthorizeResponse = 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/authorize/1.0/authorize_response',

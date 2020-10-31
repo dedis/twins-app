@@ -1,8 +1,7 @@
-import React, {useEffect} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import React from 'react';
+import {useSelector} from 'react-redux';
 import {RootState} from 'src/app/rootReducer';
 import {View, Text} from 'react-native';
-import {ConnectionInvitationMessage} from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage';
 import {
   Button,
   Layout,
@@ -12,10 +11,10 @@ import {
   useStyleSheet,
   Spinner,
 } from '@ui-kitten/components';
-import {NotificationState, updateNotificationState} from './notificationsSlice';
+import {NotificationState} from './notificationsSlice';
 import logger from 'aries-framework-javascript/build/lib/logger';
 import {ConsentInvitationMessage} from 'src/agent/protocols/consent/ConsentInvitationMessage';
-import {plainToClass, classToPlain} from 'class-transformer';
+import {plainToClass} from 'class-transformer';
 import agentModule, {EdgeAgent} from 'src/agent/agent';
 import {SafeAreaView} from 'react-navigation';
 

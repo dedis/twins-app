@@ -1,4 +1,3 @@
-import {current} from '@reduxjs/toolkit';
 import {Layout, StyleService, Text, useStyleSheet} from '@ui-kitten/components';
 import React, {useEffect, useState} from 'react';
 import {Share} from 'react-native';
@@ -22,15 +21,15 @@ export const ShareQRCodeScreen = ({navigation}) => {
 
   const styles = useStyleSheet(themedStyles);
 
-  const generateDataURL = () => {
-    return new Promise<string>(resolve => {
-      svg.toDataURL((data: string) => {
-        resolve(data);
-      });
-    });
-  };
-
   useEffect(() => {
+    const generateDataURL = () => {
+      return new Promise<string>((resolve) => {
+        svg.toDataURL((data: string) => {
+          resolve(data);
+        });
+      });
+    };
+
     if (svg !== undefined) {
       const showShareMenu = async () => {
         const data = await generateDataURL();
@@ -48,7 +47,7 @@ export const ShareQRCodeScreen = ({navigation}) => {
 
       showShareMenu();
     }
-  }, [generateDataURL, idx, navigation, svg, value, values]);
+  }, [idx, navigation, svg, value, values]);
 
   return (
     <SafeAreaView style={[styles.safeArea]}>
@@ -60,7 +59,7 @@ export const ShareQRCodeScreen = ({navigation}) => {
           size={200}
           value={value}
           backgroundColor="white"
-          getRef={c => (svg = c)}
+          getRef={(c) => (svg = c)}
         />
       </Layout>
     </SafeAreaView>

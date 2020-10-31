@@ -1,5 +1,4 @@
 import React from 'react';
-import {SafeAreaView} from 'react-navigation';
 import {
   BottomNavigation,
   BottomNavigationTab,
@@ -7,7 +6,6 @@ import {
   Divider,
   Layout,
 } from '@ui-kitten/components';
-import {StyleSheet} from 'react-native';
 
 export const TabBarComponent = ({navigation}) => {
   const onSelect = (index: number) => {
@@ -15,11 +13,11 @@ export const TabBarComponent = ({navigation}) => {
     navigation.navigate(selectedTabRoute.routeName);
   };
 
-  const HomeIcon = style => <Icon {...style} name="home-outline" />;
+  const HomeIcon = (style) => <Icon {...style} name="home-outline" />;
 
-  const ConnectionsIcon = style => <Icon {...style} name="link-outline" />;
+  const ConnectionsIcon = (style) => <Icon {...style} name="link-outline" />;
 
-  const NotificationsIcon = style => <Icon {...style} name="bell-outline" />;
+  const NotificationsIcon = (style) => <Icon {...style} name="bell-outline" />;
 
   const titleStyle = {textTransform: 'uppercase'};
 

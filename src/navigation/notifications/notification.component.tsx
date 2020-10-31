@@ -1,18 +1,10 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {LayoutList} from '../../components/layout-list.component';
 import {LayoutItem} from '../../model/layout-item.model';
-import {
-  MessageType as ConsentMessageType,
-  ConsentStatus,
-} from '../../agent/protocols/consent/messages';
+import {ConsentStatus} from '../../agent/protocols/consent/messages';
 import {useSelector} from 'react-redux';
 import {RootState} from 'src/app/rootReducer';
-import {
-  NavigatorType,
-  NavigationContainer,
-  SafeAreaView,
-} from 'react-navigation';
-import {NotificationState} from '../notifications/notificationsSlice';
+import {SafeAreaView} from 'react-navigation';
 import logger from 'aries-framework-javascript/build/lib/logger';
 import {StyleService, useStyleSheet} from '@ui-kitten/components';
 
@@ -25,19 +17,6 @@ export interface Notification extends LayoutItem {
   status: ConsentStatus;
   verkey: Verkey;
 }
-
-const {
-  INVITED,
-  INVITE_DENIED,
-  INFORMATION_REQUESTED,
-  INFORMATION_PROVIDED,
-  INFORMATION_FAILURE,
-  CONSENT_GRANTED,
-  CONSENT_DENIED,
-  CREDENTIAL_OFFERED,
-  CREDENTIAL_REQUESTED,
-  CREDENTIAL_ISSUED,
-} = NotificationState;
 
 const stateToRouteMap = {
   0: 'ConsentInvite',
@@ -52,7 +31,7 @@ const stateToRouteMap = {
   9: 'Credential',
 };
 
-export const NotificationScreen = ({navigation, screenProps}) => {
+export const NotificationScreen = ({navigation}) => {
   const notifications = useSelector((state: RootState) => state.notifications);
   const themedStyles = StyleService.create({
     safeArea: {

@@ -3,7 +3,6 @@ import {ProvisioningService} from 'aries-framework-javascript/build/lib/agent/Pr
 import {ConnectionService} from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionService';
 import {MessageSender} from 'aries-framework-javascript/build/lib/agent/MessageSender';
 import logger from 'aries-framework-javascript/build/lib/logger';
-import {ConnectionInvitationMessage} from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage';
 import {ConnectionResponseMessage} from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionResponseMessage';
 import {Wallet} from 'aries-framework-javascript/build/lib/wallet/Wallet';
 import {ConnectionState} from 'aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
@@ -45,9 +44,7 @@ export class SignalRRoutingModule {
         'There is no provisioning. Creating connection with agency...',
       );
 
-      const inviteUrl = `${
-        this.agentConfig.agencyUrl
-      }/.well-known/agent-configuration`;
+      const inviteUrl = `${this.agentConfig.agencyUrl}/.well-known/agent-configuration`;
       const invitationMessage = await (await fetch(inviteUrl)).json();
       logger.logJson(
         'Creating connectionRequest with invitation',

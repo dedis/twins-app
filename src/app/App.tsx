@@ -7,7 +7,6 @@ import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import {mapping, dark} from '@eva-design/eva';
 import {AppNavigator} from '../navigation/navigation.component';
 import {myTheme} from './custom-theme';
-import {setJSExceptionHandler} from 'react-native-exception-handler';
 import {Log} from '@dedis/cothority';
 
 import store from './store';
@@ -36,7 +35,7 @@ const App = () => {
             .then(() => {
               console.log('Started SignalR connection');
             })
-            .catch(e => {
+            .catch(() => {
               console.log('Error starting SignalR connection');
             });
         });

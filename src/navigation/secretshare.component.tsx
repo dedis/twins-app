@@ -1,9 +1,7 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {
   Button,
-  Input,
   Layout,
-  Modal,
   Select,
   SelectOption,
   SelectOptionType,
@@ -12,12 +10,10 @@ import {
   useStyleSheet,
 } from '@ui-kitten/components';
 import {useState} from 'react';
-import {Alert, DocumentSelectionState, Share} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import * as secrets from 'secrets.js-grempe';
-import QRCode from 'react-native-qrcode-svg';
 
-export const SecretShareScreen = ({navigation, screenProps}) => {
+export const SecretShareScreen = ({navigation}) => {
   const maxTotalShares = 10;
   const [maxThresholdShares, setMaxThresholdShares] = useState(maxTotalShares);
   const [totalShares, setTotalShares] = useState<SelectOption>();
@@ -36,20 +32,22 @@ export const SecretShareScreen = ({navigation, screenProps}) => {
   const totalSharesOptions = Array.from(
     {length: maxTotalShares},
     (_, i) => i + 1,
-  ).map(x => ({text: `${x}`}));
+  ).map((x) => ({text: `${x}`}));
   const thresholdSharesOptions = Array.from(
     {length: maxThresholdShares},
     (_, i) => i + 1,
-  ).map(x => ({text: `${x} `}));
+  ).map((x) => ({text: `${x} `}));
 
   const key: string = navigation.getParam('key');
 
   const onShare = () => {
     const numTotalShares = Number.parseInt(
       (totalShares as SelectOptionType).text,
+      10,
     );
     const numThresholdShares = Number.parseInt(
       (thresholdShares as SelectOptionType).text,
+      10,
     );
     const shares = secrets.share(key, numTotalShares, numThresholdShares);
     navigation.navigate('ShareQRCode', {values: shares});
@@ -58,12 +56,11 @@ export const SecretShareScreen = ({navigation, screenProps}) => {
   const ontotalSharesUpdate = (x: SelectOption) => {
     const option = x as SelectOptionType;
     setTotalShares(x);
-    setMaxThresholdShares(Number.parseInt(option.text));
+    setMaxThresholdShares(Number.parseInt(option.text, 10));
     setThresholdShares({text: ''});
   };
 
   const onThresholdSharesUpdate = (x: SelectOption) => {
-    const option = x as SelectOptionType;
     setThresholdShares(x);
   };
 
@@ -74,7 +71,7 @@ export const SecretShareScreen = ({navigation, screenProps}) => {
     return (
       (totalShares as SelectOptionType).text === '' ||
       (thresholdShares as SelectOptionType).text === '' ||
-      Number.parseInt((thresholdShares as SelectOptionType).text) < 2
+      Number.parseInt((thresholdShares as SelectOptionType).text, 10) < 2
     );
   };
 

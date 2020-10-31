@@ -20,7 +20,7 @@ export const RecoverSecretScreen = ({navigation}) => {
   const thresholdSharesOptions = Array.from(
     {length: maxTotalShares},
     (_, i) => i + 1,
-  ).map(x => ({text: `${x} `}));
+  ).map((x) => ({text: `${x} `}));
   const [thresholdShares, setThresholdShares] = useState<SelectOption>();
 
   const themedStyles = StyleService.create({
@@ -50,13 +50,15 @@ export const RecoverSecretScreen = ({navigation}) => {
   const styles = useStyleSheet(themedStyles);
 
   const onThresholdSharesUpdate = (x: SelectOption) => {
-    const option = x as SelectOptionType;
     setThresholdShares(x);
   };
 
   const onScanShares = () => {
     navigation.navigate('ScanShares', {
-      totalShares: Number.parseInt((thresholdShares as SelectOptionType).text),
+      totalShares: Number.parseInt(
+        (thresholdShares as SelectOptionType).text,
+        10,
+      ),
     });
   };
 

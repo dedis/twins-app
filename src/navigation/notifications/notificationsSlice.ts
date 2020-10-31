@@ -1,6 +1,5 @@
 import {LayoutItem} from '../../model/layout-item.model';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {BaseRecord} from 'aries-framework-javascript/build/lib/storage/BaseRecord';
 
 type NotificationPayload = {};
 
@@ -62,7 +61,7 @@ const notifications = createSlice({
       action: PayloadAction<NotificationStateUpdate<NotificationPayload>>,
     ) {
       const stateUpdate = action.payload;
-      const idx = state.items.findIndex(item => item.id === stateUpdate.id);
+      const idx = state.items.findIndex((item) => item.id === stateUpdate.id);
       state.items[idx].payload = stateUpdate.payload;
       state.items[idx].state = stateUpdate.state;
       state.itemsById[stateUpdate.id].payload = stateUpdate.payload;

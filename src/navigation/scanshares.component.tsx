@@ -8,7 +8,7 @@ import {
   TopNavigationAction,
   useStyleSheet,
 } from '@ui-kitten/components';
-import React, {RefObject, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {ImageStyle, SafeAreaView, View} from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import * as Keychain from 'react-native-keychain';
@@ -41,7 +41,7 @@ export const ScanSharesScreen = ({navigation}) => {
       <TopNavigationAction
         icon={BackIcon}
         onPress={() => navigation.goBack()}
-      />;
+      />
     );
   };
 
@@ -66,11 +66,11 @@ export const ScanSharesScreen = ({navigation}) => {
     };
 
     setKey();
-  }, [currentShare]);
+  }, [currentShare, navigation, shareValues, totalShares]);
 
   const onRead = (e: any) => {
     setShareValues([...shareValues, e.data]);
-    setCurrentShare(val => val + 1);
+    setCurrentShare((val) => val + 1);
     setShowButton(true);
   };
 

@@ -1,34 +1,45 @@
-import RNFS from 'react-native-fs';
 import debug from 'debug';
 // @ts-ignore
 import indy from 'rn-indy-sdk';
 
-import { RealTimeInboundTransporter, HTTPOutboundTransporter } from './transport/transporters';
-import { InitConfig } from 'aries-framework-javascript/build/lib/types';
-import { mediatorURL } from '../app/config';
-import { Agent, InboundTransporter, OutboundTransporter } from 'aries-framework-javascript';
-import { ConsentService } from './protocols/consent/ConsentService';
-import { EventEmitter } from 'events';
-import { EventType, StateChangeEvent, ExchangeService } from 'aries-framework-javascript/build/lib/protocols/didexchange/ExchangeService';
-import { fetchAndAddConnection } from 'src/navigation/connections/connectionsSlice';
-import { MessageRepository } from 'aries-framework-javascript/build/lib/storage/MessageRepository';
-import { SignalRClientModule } from './module/SignalRClientModule';
-import { SignalRRoutingModule } from './module/SignalRoutingModule';
-import { CustomConsumerRoutingService } from './protocols/routing/ConsumerRoutingService';
+import {
+  RealTimeInboundTransporter,
+  HTTPOutboundTransporter,
+} from './transport/transporters';
+import {InitConfig} from 'aries-framework-javascript/build/lib/types';
+import {
+  Agent,
+  InboundTransporter,
+  OutboundTransporter,
+} from 'aries-framework-javascript';
+import {ConsentService} from './protocols/consent/ConsentService';
+import {EventEmitter} from 'events';
+import {
+  EventType,
+  StateChangeEvent,
+  ExchangeService,
+} from 'aries-framework-javascript/build/lib/protocols/didexchange/ExchangeService';
+import {fetchAndAddConnection} from 'src/navigation/connections/connectionsSlice';
+import {MessageRepository} from 'aries-framework-javascript/build/lib/storage/MessageRepository';
+import {SignalRClientModule} from './module/SignalRClientModule';
+import {SignalRRoutingModule} from './module/SignalRoutingModule';
+import {CustomConsumerRoutingService} from './protocols/routing/ConsumerRoutingService';
 import logger from 'aries-framework-javascript/build/lib/logger';
-import { ConnectionState } from 'aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
+import {ConnectionState} from 'aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
 import store from 'src/app/store';
-import { ConsentInvitationHandler } from './handlers/consent/ConsentInvitationHandler';
-import { Repository } from 'aries-framework-javascript/build/lib/storage/Repository';
-import { ConsentRecord } from './protocols/consent/ConsentRecord';
-import { ConsentModule } from './module/ConsentModule';
-import { ConsentInformationResponseHandler } from './handlers/consent/ConsentInformationResponseHandler';
-import { walletPath } from 'src/app/config';
-import { CredentialRecord } from 'aries-framework-javascript/build/lib/storage/CredentialRecord';
-import { CredentialState } from 'aries-framework-javascript/build/lib/protocols/credentials/CredentialState';
-import { addNotification, NotificationItem, NotificationState } from 'src/navigation/notifications/notificationsSlice';
-import { createSerializableStateInvariantMiddleware } from '@reduxjs/toolkit';
-import { classToPlain } from 'class-transformer';
+import {ConsentInvitationHandler} from './handlers/consent/ConsentInvitationHandler';
+import {Repository} from 'aries-framework-javascript/build/lib/storage/Repository';
+import {ConsentRecord} from './protocols/consent/ConsentRecord';
+import {ConsentModule} from './module/ConsentModule';
+import {ConsentInformationResponseHandler} from './handlers/consent/ConsentInformationResponseHandler';
+import {CredentialRecord} from 'aries-framework-javascript/build/lib/storage/CredentialRecord';
+import {CredentialState} from 'aries-framework-javascript/build/lib/protocols/credentials/CredentialState';
+import {
+  addNotification,
+  NotificationItem,
+  NotificationState,
+} from 'src/navigation/notifications/notificationsSlice';
+import {classToPlain} from 'class-transformer';
 
 debug.enable('aries-framework-javascript');
 
@@ -45,17 +56,41 @@ export class EdgeAgent extends Agent {
     initialConfig: InitConfig,
     inboundTransporter: InboundTransporter,
     outboundTransporter: OutboundTransporter,
-    indy: Indy,
-    messageRepository?: MessageRepository
+    indyRef: Indy,
+    messageRepository?: MessageRepository,
   ) {
-    super(initialConfig, inboundTransporter, outboundTransporter, indy, messageRepository);
+    super(
+      initialConfig,
+      inboundTransporter,
+      outboundTransporter,
+      indyRef,
+      messageRepository,
+    );
     this.eventEmitters = new Set();
-    this.consentRepository = new Repository<ConsentRecord>(ConsentRecord, this.storageService);
+    this.consentRepository = new Repository<ConsentRecord>(
+      ConsentRecord,
+      this.storageService,
+    );
 
     // We have our own implementation of ConsumerRoutingService
-    this.consumerRoutingService = new CustomConsumerRoutingService(this.messageSender, this.agentConfig);
-    this.didexchangeService = new ExchangeService(this.wallet, this.agentConfig, this.connectionRepository, this.ledgerService, this.consumerRoutingService);
-    this.consentService = new ConsentService(this.didexchangeService, this.messageSender, this.consentRepository, this.connectionRepository, this.wallet);
+    this.consumerRoutingService = new CustomConsumerRoutingService(
+      this.messageSender,
+      this.agentConfig,
+    );
+    this.didexchangeService = new ExchangeService(
+      this.wallet,
+      this.agentConfig,
+      this.connectionRepository,
+      this.ledgerService,
+      this.consumerRoutingService,
+    );
+    this.consentService = new ConsentService(
+      this.didexchangeService,
+      this.messageSender,
+      this.consentRepository,
+      this.connectionRepository,
+      this.wallet,
+    );
     // @ts-ignore
     this.dispatcher.handlers = [];
     this.registerHandlers();
@@ -67,11 +102,19 @@ export class EdgeAgent extends Agent {
 
   protected registerHandlers() {
     super.registerHandlers();
-    this.dispatcher.registerHandler(new ConsentInvitationHandler(this.consentService));
-    this.dispatcher.registerHandler(new ConsentInformationResponseHandler(this.consentService));
+    this.dispatcher.registerHandler(
+      new ConsentInvitationHandler(this.consentService),
+    );
+    this.dispatcher.registerHandler(
+      new ConsentInformationResponseHandler(this.consentService),
+    );
   }
 
-  public registerEventHandler(eventEmitter: EventEmitter, eventType: string, handler: (...args: any) => void) {
+  public registerEventHandler(
+    eventEmitter: EventEmitter,
+    eventType: string,
+    handler: (...args: any) => void,
+  ) {
     this.eventEmitters.add(eventEmitter);
     eventEmitter.on(eventType, handler);
   }
@@ -100,7 +143,10 @@ export class EdgeAgent extends Agent {
       this.messageReceiver,
       this.agentConfig,
     );
-    this.consentModule = new ConsentModule(this.consentService, this.messageSender);
+    this.consentModule = new ConsentModule(
+      this.consentService,
+      this.messageSender,
+    );
   }
 }
 
@@ -126,7 +172,7 @@ class AgentModule {
       config,
       this.inboundTransporter,
       this.outboundTransporter,
-      indy
+      indy,
     );
 
     // Event Handlers
@@ -134,30 +180,44 @@ class AgentModule {
     // @ts-ignore
     const credentialEventEmitter = this.agent.credentials.credentialService;
 
-    this.agent.registerEventHandler(didExchangeEventEmitter, EventType.StateChanged, (event: StateChangeEvent) => {
-      if (event.state == ConnectionState.COMPLETE) {
-        logger.log('Established Connection');
-        store.dispatch(fetchAndAddConnection(this.agent!, event.connectionId));
-      }
-    });
+    this.agent.registerEventHandler(
+      didExchangeEventEmitter,
+      EventType.StateChanged,
+      (event: StateChangeEvent) => {
+        if (event.state === ConnectionState.COMPLETE) {
+          logger.log('Established Connection');
+          store.dispatch(
+            fetchAndAddConnection(this.agent!, event.connectionId),
+          );
+        }
+      },
+    );
 
-    this.agent.registerEventHandler(credentialEventEmitter, EventType.StateChanged, async (event: any) => {
-      const { credential, prevState } : {credential: CredentialRecord, prevState: string } = event;
-      if (credential.state === CredentialState.OfferReceived) {
-        logger.log('Got credential offer');
-        const connection = await this.agent?.connections.find(credential.connectionId);
-        const serialized = classToPlain(credential);
-        console.log('credential', serialized);
-        const item: NotificationItem<{}> = {
-          title: 'Credential Offer',
-          description: `You've received a credential offer from ${connection?.theirDid}`,
-          id: credential.id,
-          state: NotificationState.CREDENTIAL_OFFERED,
-          payload: serialized,
-        };
-        store.dispatch(addNotification(item));
-      }
-    });
+    this.agent.registerEventHandler(
+      credentialEventEmitter,
+      EventType.StateChanged,
+      async (event: any) => {
+        const {
+          credential,
+        }: {credential: CredentialRecord; prevState: string} = event;
+        if (credential.state === CredentialState.OfferReceived) {
+          logger.log('Got credential offer');
+          const connection = await this.agent?.connections.find(
+            credential.connectionId,
+          );
+          const serialized = classToPlain(credential);
+          console.log('credential', serialized);
+          const item: NotificationItem<{}> = {
+            title: 'Credential Offer',
+            description: `You've received a credential offer from ${connection?.theirDid}`,
+            id: credential.id,
+            state: NotificationState.CREDENTIAL_OFFERED,
+            payload: serialized,
+          };
+          store.dispatch(addNotification(item));
+        }
+      },
+    );
 
     await this.agent.init();
     this._initialized = true;

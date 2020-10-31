@@ -1,5 +1,4 @@
 import {ConsentService} from '../protocols/consent/ConsentService';
-import {ConsentInvitationMessage} from '../protocols/consent/ConsentInvitationMessage';
 import {MessageSender} from 'aries-framework-javascript/build/lib/agent/MessageSender';
 
 export class ConsentModule {

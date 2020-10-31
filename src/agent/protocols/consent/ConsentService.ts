@@ -18,7 +18,6 @@ import {ExchangeService} from 'aries-framework-javascript/build/lib/protocols/di
 import {ConnectionInvitationMessage} from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage';
 import {MessageSender} from 'aries-framework-javascript/build/lib/agent/MessageSender';
 import {ConnectionState} from 'aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
-import {ReturnRouteTypes} from 'aries-framework-javascript/build/lib/decorators/transport/TransportDecorator';
 import {InboundMessageContext} from 'aries-framework-javascript/build/lib/agent/models/InboundMessageContext';
 import {ConsentInformationResponseMessage} from './ConsentInformationResponseMessage';
 import {Roster} from '@dedis/cothority/network/proto';
@@ -27,13 +26,7 @@ import rosterData from 'src/app/roster';
 import {SkipchainRPC, SkipBlock} from '@dedis/cothority/skipchain';
 import ByzCoinRPC from '@dedis/cothority/byzcoin/byzcoin-rpc';
 import DarcInstance from '@dedis/cothority/byzcoin/contracts/darc-instance';
-import {
-  IdentityDid,
-  SignerEd25519,
-  Rule,
-  SignerDid,
-} from '@dedis/cothority/darc';
-import {EdgeAgent} from 'src/agent/agent';
+import {IdentityDid, Rule, SignerDid} from '@dedis/cothority/darc';
 import {
   GetUpdateChain,
   GetUpdateChainReply,
@@ -41,7 +34,6 @@ import {
 import {Wallet} from 'aries-framework-javascript/build/lib/wallet/Wallet';
 import {ConsentGrantMessage} from './ConsentGrantMessage';
 import logger from 'aries-framework-javascript/build/lib/logger';
-import {RecordType} from 'aries-framework-javascript/build/lib/storage/BaseRecord';
 import {RosterWSConnection} from '@dedis/cothority/network';
 
 export class ConsentService {
@@ -97,7 +89,7 @@ export class ConsentService {
     await this.messageSender.sendMessage(connectionRequest);
     const connectionRecord: ConnectionRecord = await poll(
       () => this.exchangeService.find(connectionRequest.connection.id),
-      (c: ConnectionRecord) => c.state != ConnectionState.COMPLETE,
+      (c: ConnectionRecord) => c.state !== ConnectionState.COMPLETE,
       10000, // High so as to ensure ack is sent as well. TODO: change this so that we wait for ack to be sent
     );
 
@@ -199,7 +191,7 @@ export class ConsentService {
     // await identity.init(); // no need to init
     newDarc.rules.appendToRule('spawn:calypsoRead', identity, Rule.OR);
     const signer = new SignerDid(
-      async (data: Buffer, did: string) => {
+      async (data: Buffer, _: string) => {
         return await this.wallet.sign(data, verkey);
       },
       {did: publicDid, method: 'sov'},

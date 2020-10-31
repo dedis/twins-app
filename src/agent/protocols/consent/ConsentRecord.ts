@@ -1,9 +1,6 @@
 // @ts-ignore
 import {v4 as uuid} from 'uuid';
-import {
-  BaseRecord,
-  RecordType,
-} from 'aries-framework-javascript/build/lib/storage/BaseRecord';
+import {BaseRecord} from 'aries-framework-javascript/build/lib/storage/BaseRecord';
 import {NotificationState} from 'src/navigation/notifications/notificationsSlice';
 
 declare module 'aries-framework-javascript/build/lib/storage/BaseRecord' {
@@ -11,6 +8,8 @@ declare module 'aries-framework-javascript/build/lib/storage/BaseRecord' {
     ConsentRecord = 'ConsentRecord',
   }
 }
+
+import {RecordType} from 'aries-framework-javascript/build/lib/storage/BaseRecord';
 
 export interface ConsentStorageProps {
   id?: string;

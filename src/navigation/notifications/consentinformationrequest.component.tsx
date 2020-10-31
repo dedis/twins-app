@@ -9,13 +9,10 @@ import {
   Spinner,
 } from '@ui-kitten/components';
 import {View, Text, Linking, Alert, ToastAndroid} from 'react-native';
-import logger from 'aries-framework-javascript/build/lib/logger';
 import {EdgeAgent} from 'src/agent/agent';
 import {useSelector} from 'react-redux';
 import {RootState} from 'src/app/rootReducer';
-import {NotificationScreen} from './notification.component';
 import {NotificationState} from './notificationsSlice';
-import {ConsentInformationRequestMessage} from 'src/agent/protocols/consent/ConsentInformationRequestMessage';
 import {plainToClass} from 'class-transformer';
 import {ConsentInformationResponseMessage} from 'src/agent/protocols/consent/ConsentInformationResponseMessage';
 import agentModule from 'src/agent/agent';

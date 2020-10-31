@@ -1,18 +1,11 @@
 import React from 'react';
-import {
-  LayoutListElement,
-  LayoutList,
-} from '../../components/layout-list.component';
-import {LayoutItem} from 'src/model/layout-item.model';
+import {LayoutList} from '../../components/layout-list.component';
 import {useSelector} from 'react-redux';
 import {RootState} from 'src/app/rootReducer';
 import {StyleService, useStyleSheet} from '@ui-kitten/components';
 import {SafeAreaView} from 'react-navigation';
 
-export const ConnectionsScreen = ({
-  navigation,
-  screenProps,
-}): LayoutListElement => {
+export const ConnectionsScreen = () => {
   const connections = useSelector((state: RootState) => state.connections);
   const themedStyles = StyleService.create({
     safeArea: {

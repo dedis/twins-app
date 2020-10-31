@@ -1,5 +1,4 @@
 import {AgentMessage} from 'aries-framework-javascript/build/lib/agent/AgentMessage';
-import {Equals} from 'class-validator';
 
 export interface CreateInboxMessageOptions {
   id?: string;

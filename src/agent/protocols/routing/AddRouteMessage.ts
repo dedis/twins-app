@@ -1,5 +1,4 @@
 import {AgentMessage} from 'aries-framework-javascript/build/lib/agent/AgentMessage';
-import {Equals, IsUUID} from 'class-validator';
 
 export interface AddRouteMessageOptions {
   routeDestination: Verkey;
