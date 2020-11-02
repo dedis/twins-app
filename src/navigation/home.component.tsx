@@ -121,7 +121,7 @@ export const HomeScreen = ({navigation}) => {
             securityLevel: Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
           });
           if (key) {
-            const {walletKey, seed} = JSON.parse(key.password);
+            const {walletKey, didSeed: seed} = JSON.parse(key.password);
             agentConfig.walletCredentials.key = walletKey;
             agentConfig.publicDidSeed = seed;
             await agentModule.init(agentConfig);
@@ -140,7 +140,7 @@ export const HomeScreen = ({navigation}) => {
     }
 
     startup();
-  });
+  }, [dispatch]);
 
   const onShareSecret = () => {
     navigation.navigate('SecretShare', {
