@@ -4,14 +4,14 @@ import {
   LogLevel,
   HttpTransportType,
 } from '@microsoft/signalr';
-import {ProvisioningService} from 'aries-framework-javascript/build/lib/agent/ProvisioningService';
-import {AgentConfig} from 'aries-framework-javascript/build/lib/agent/AgentConfig';
-import {createOutboundMessage} from 'aries-framework-javascript/build/lib/protocols/helpers';
+import {ProvisioningService} from '@gnarula/aries-framework-javascript/build/lib/agent/ProvisioningService';
+import {AgentConfig} from '@gnarula/aries-framework-javascript/build/lib/agent/AgentConfig';
+import {createOutboundMessage} from '@gnarula/aries-framework-javascript/build/lib/protocols/helpers';
 import {AuthorizeResponseMessage} from '../protocols/routing/AuthorizeResponseMessage';
-import {ConnectionService} from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionService';
-import {EnvelopeService} from 'aries-framework-javascript/build/lib/agent/EnvelopeService';
-import {MessageReceiver} from 'aries-framework-javascript/build/lib/agent/MessageReceiver';
-import logger from 'aries-framework-javascript/build/lib/logger';
+import {ConnectionService} from '@gnarula/aries-framework-javascript/build/lib/protocols/connections/ConnectionService';
+import {EnvelopeService} from '@gnarula/aries-framework-javascript/build/lib/agent/EnvelopeService';
+import {MessageReceiver} from '@gnarula/aries-framework-javascript/build/lib/agent/MessageReceiver';
+import logger from '@gnarula/aries-framework-javascript/build/lib/logger';
 
 export class SignalRClientModule {
   provisioningService: ProvisioningService;

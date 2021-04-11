@@ -6,34 +6,34 @@ import {
   RealTimeInboundTransporter,
   HTTPOutboundTransporter,
 } from './transport/transporters';
-import {InitConfig} from 'aries-framework-javascript/build/lib/types';
+import {InitConfig} from '@gnarula/aries-framework-javascript/build/lib/types';
 import {
   Agent,
   InboundTransporter,
   OutboundTransporter,
-} from 'aries-framework-javascript';
+} from '@gnarula/aries-framework-javascript';
 import {ConsentService} from './protocols/consent/ConsentService';
 import {EventEmitter} from 'events';
 import {
   EventType,
   StateChangeEvent,
   ExchangeService,
-} from 'aries-framework-javascript/build/lib/protocols/didexchange/ExchangeService';
+} from '@gnarula/aries-framework-javascript/build/lib/protocols/didexchange/ExchangeService';
 import {fetchAndAddConnection} from 'src/navigation/connections/connectionsSlice';
-import {MessageRepository} from 'aries-framework-javascript/build/lib/storage/MessageRepository';
+import {MessageRepository} from '@gnarula/aries-framework-javascript/build/lib/storage/MessageRepository';
 import {SignalRClientModule} from './module/SignalRClientModule';
 import {SignalRRoutingModule} from './module/SignalRoutingModule';
 import {CustomConsumerRoutingService} from './protocols/routing/ConsumerRoutingService';
-import logger from 'aries-framework-javascript/build/lib/logger';
-import {ConnectionState} from 'aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
+import logger from '@gnarula/aries-framework-javascript/build/lib/logger';
+import {ConnectionState} from '@gnarula/aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
 import store from 'src/app/store';
 import {ConsentInvitationHandler} from './handlers/consent/ConsentInvitationHandler';
-import {Repository} from 'aries-framework-javascript/build/lib/storage/Repository';
+import {Repository} from '@gnarula/aries-framework-javascript/build/lib/storage/Repository';
 import {ConsentRecord} from './protocols/consent/ConsentRecord';
 import {ConsentModule} from './module/ConsentModule';
 import {ConsentInformationResponseHandler} from './handlers/consent/ConsentInformationResponseHandler';
-import {CredentialRecord} from 'aries-framework-javascript/build/lib/storage/CredentialRecord';
-import {CredentialState} from 'aries-framework-javascript/build/lib/protocols/credentials/CredentialState';
+import {CredentialRecord} from '@gnarula/aries-framework-javascript/build/lib/storage/CredentialRecord';
+import {CredentialState} from '@gnarula/aries-framework-javascript/build/lib/protocols/credentials/CredentialState';
 import {
   addNotification,
   NotificationItem,
@@ -41,7 +41,7 @@ import {
 } from 'src/navigation/notifications/notificationsSlice';
 import {classToPlain} from 'class-transformer';
 
-debug.enable('aries-framework-javascript');
+debug.enable('@gnarula/aries-framework-javascript');
 
 export class EdgeAgent extends Agent {
   protected consentService: ConsentService;

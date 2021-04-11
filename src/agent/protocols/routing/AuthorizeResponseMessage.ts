@@ -1,4 +1,4 @@
-import {AgentMessage} from 'aries-framework-javascript/build/lib/agent/AgentMessage';
+import {AgentMessage} from '@gnarula/aries-framework-javascript/build/lib/agent/AgentMessage';
 import {IsString} from 'class-validator';
 
 export enum MessageType {

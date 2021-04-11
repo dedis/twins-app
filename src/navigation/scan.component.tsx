@@ -10,8 +10,8 @@ import {
 } from '@ui-kitten/components';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {ImageStyle} from 'react-native';
-import {Agent} from 'aries-framework-javascript';
-import {ConnectionInvitationMessage} from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage';
+import {Agent} from '@gnarula/aries-framework-javascript';
+import {ConnectionInvitationMessage} from '@gnarula/aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage';
 import {plainToClass} from 'class-transformer';
 import agentModule from 'src/agent/agent';
 import {SafeAreaView} from 'react-navigation';

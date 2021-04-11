@@ -5,7 +5,7 @@ import {ConsentStatus} from '../../agent/protocols/consent/messages';
 import {useSelector} from 'react-redux';
 import {RootState} from 'src/app/rootReducer';
 import {SafeAreaView} from 'react-navigation';
-import logger from 'aries-framework-javascript/build/lib/logger';
+import logger from '@gnarula/aries-framework-javascript/build/lib/logger';
 import {StyleService, useStyleSheet} from '@ui-kitten/components';
 
 export interface Notification extends LayoutItem {

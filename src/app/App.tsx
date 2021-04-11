@@ -7,7 +7,7 @@ import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import {mapping, dark} from '@eva-design/eva';
 import {AppNavigator} from '../navigation/navigation.component';
 import {myTheme} from './custom-theme';
-import {Log} from '@dedis/cothority';
+import {Log} from '@gnarula/cothority';
 
 import store from './store';
 import {AppState, AppStateStatus} from 'react-native';

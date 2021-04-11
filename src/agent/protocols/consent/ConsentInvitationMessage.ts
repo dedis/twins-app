@@ -1,5 +1,5 @@
-import {AgentMessage} from 'aries-framework-javascript/build/lib/agent/AgentMessage';
-import {ConnectionInvitationMessage} from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage';
+import {AgentMessage} from '@gnarula/aries-framework-javascript/build/lib/agent/AgentMessage';
+import {ConnectionInvitationMessage} from '@gnarula/aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage';
 import {MessageType} from './messages';
 
 export interface ConsentInvitationMessageOptions {

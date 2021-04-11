@@ -1,7 +1,7 @@
 import {
   Handler,
   HandlerInboundMessage,
-} from 'aries-framework-javascript/build/lib/handlers/Handler';
+} from '@gnarula/aries-framework-javascript/build/lib/handlers/Handler';
 import {ConsentService} from 'src/agent/protocols/consent/ConsentService';
 import {ConsentInformationResponseMessage} from 'src/agent/protocols/consent/ConsentInformationResponseMessage';
 

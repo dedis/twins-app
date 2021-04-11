@@ -1,5 +1,5 @@
 import {ConsentService} from '../protocols/consent/ConsentService';
-import {MessageSender} from 'aries-framework-javascript/build/lib/agent/MessageSender';
+import {MessageSender} from '@gnarula/aries-framework-javascript/build/lib/agent/MessageSender';
 
 export class ConsentModule {
   private consentService: ConsentService;

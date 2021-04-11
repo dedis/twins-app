@@ -13,9 +13,9 @@ import {SafeAreaView, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from 'src/app/rootReducer';
 import {plainToClass} from 'class-transformer';
-import {CredentialOfferMessage} from 'aries-framework-javascript/build/lib/protocols/credentials/messages/CredentialOfferMessage';
+import {CredentialOfferMessage} from '@gnarula/aries-framework-javascript/build/lib/protocols/credentials/messages/CredentialOfferMessage';
 import agentModule from 'src/agent/agent';
-import {CredentialState} from 'aries-framework-javascript/build/lib/protocols/credentials/CredentialState';
+import {CredentialState} from '@gnarula/aries-framework-javascript/build/lib/protocols/credentials/CredentialState';
 
 export const CredentialScreen = ({navigation}) => {
   const notificationId = navigation.getParam('notificationId');

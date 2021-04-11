@@ -1,10 +1,10 @@
 import {
   InboundTransporter,
   OutboundTransporter,
-} from 'aries-framework-javascript';
-import {OutboundPackage} from 'aries-framework-javascript/build/lib/types';
+} from '@gnarula/aries-framework-javascript';
+import {OutboundPackage} from '@gnarula/aries-framework-javascript/build/lib/types';
 import {EdgeAgent} from '../agent';
-import logger from 'aries-framework-javascript/build/lib/logger';
+import logger from '@gnarula/aries-framework-javascript/build/lib/logger';
 
 export class RealTimeInboundTransporter implements InboundTransporter {
   state: number = 0;

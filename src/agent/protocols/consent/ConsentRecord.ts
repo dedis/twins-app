@@ -1,15 +1,15 @@
 // @ts-ignore
 import {v4 as uuid} from 'uuid';
-import {BaseRecord} from 'aries-framework-javascript/build/lib/storage/BaseRecord';
+import {BaseRecord} from '@gnarula/aries-framework-javascript/build/lib/storage/BaseRecord';
 import {NotificationState} from 'src/navigation/notifications/notificationsSlice';
 
-declare module 'aries-framework-javascript/build/lib/storage/BaseRecord' {
+declare module '@gnarula/aries-framework-javascript/build/lib/storage/BaseRecord' {
   export enum RecordType {
     ConsentRecord = 'ConsentRecord',
   }
 }
 
-import {RecordType} from 'aries-framework-javascript/build/lib/storage/BaseRecord';
+import {RecordType} from '@gnarula/aries-framework-javascript/build/lib/storage/BaseRecord';
 
 export interface ConsentStorageProps {
   id?: string;

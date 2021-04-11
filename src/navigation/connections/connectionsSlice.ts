@@ -1,8 +1,8 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {LayoutItem} from '../../model/layout-item.model';
-import {Agent} from 'aries-framework-javascript';
+import {Agent} from '@gnarula/aries-framework-javascript';
 import {AppThunk} from '../../app/store';
-import logger from 'aries-framework-javascript/build/lib/logger';
+import logger from '@gnarula/aries-framework-javascript/build/lib/logger';
 
 type ConnectionsState = {
   items: LayoutItem[];

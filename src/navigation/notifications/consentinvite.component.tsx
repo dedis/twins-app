@@ -12,7 +12,7 @@ import {
   Spinner,
 } from '@ui-kitten/components';
 import {NotificationState} from './notificationsSlice';
-import logger from 'aries-framework-javascript/build/lib/logger';
+import logger from '@gnarula/aries-framework-javascript/build/lib/logger';
 import {ConsentInvitationMessage} from 'src/agent/protocols/consent/ConsentInvitationMessage';
 import {plainToClass} from 'class-transformer';
 import agentModule, {EdgeAgent} from 'src/agent/agent';

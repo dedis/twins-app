@@ -9,32 +9,32 @@ import {
   updateNotificationState,
 } from 'src/navigation/notifications/notificationsSlice';
 import {classToPlain, plainToClass} from 'class-transformer';
-import {ConnectionRecord} from 'aries-framework-javascript';
-import {createOutboundMessage} from 'aries-framework-javascript/build/lib/protocols/helpers';
+import {ConnectionRecord} from '@gnarula/aries-framework-javascript';
+import {createOutboundMessage} from '@gnarula/aries-framework-javascript/build/lib/protocols/helpers';
 import {ConsentInformationRequestMessage} from './ConsentInformationRequestMessage';
-import {Repository} from 'aries-framework-javascript/build/lib/storage/Repository';
+import {Repository} from '@gnarula/aries-framework-javascript/build/lib/storage/Repository';
 import {ConsentRecord} from './ConsentRecord';
-import {ExchangeService} from 'aries-framework-javascript/build/lib/protocols/didexchange/ExchangeService';
-import {ConnectionInvitationMessage} from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage';
-import {MessageSender} from 'aries-framework-javascript/build/lib/agent/MessageSender';
-import {ConnectionState} from 'aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
-import {InboundMessageContext} from 'aries-framework-javascript/build/lib/agent/models/InboundMessageContext';
+import {ExchangeService} from '@gnarula/aries-framework-javascript/build/lib/protocols/didexchange/ExchangeService';
+import {ConnectionInvitationMessage} from '@gnarula/aries-framework-javascript/build/lib/protocols/connections/ConnectionInvitationMessage';
+import {MessageSender} from '@gnarula/aries-framework-javascript/build/lib/agent/MessageSender';
+import {ConnectionState} from '@gnarula/aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
+import {InboundMessageContext} from '@gnarula/aries-framework-javascript/build/lib/agent/models/InboundMessageContext';
 import {ConsentInformationResponseMessage} from './ConsentInformationResponseMessage';
-import {Roster} from '@dedis/cothority/network/proto';
+import {Roster} from '@gnarula/cothority/network/proto';
 import {bcID, writeInstanceID, filename, documentDarc} from 'src/app/config';
 import rosterData from 'src/app/roster';
-import {SkipchainRPC, SkipBlock} from '@dedis/cothority/skipchain';
-import ByzCoinRPC from '@dedis/cothority/byzcoin/byzcoin-rpc';
-import DarcInstance from '@dedis/cothority/byzcoin/contracts/darc-instance';
-import {IdentityDid, Rule, SignerDid} from '@dedis/cothority/darc';
+import {SkipchainRPC, SkipBlock} from '@gnarula/cothority/skipchain';
+import ByzCoinRPC from '@gnarula/cothority/byzcoin/byzcoin-rpc';
+import DarcInstance from '@gnarula/cothority/byzcoin/contracts/darc-instance';
+import {IdentityDid, Rule, SignerDid} from '@gnarula/cothority/darc';
 import {
   GetUpdateChain,
   GetUpdateChainReply,
-} from '@dedis/cothority/skipchain/proto';
-import {Wallet} from 'aries-framework-javascript/build/lib/wallet/Wallet';
+} from '@gnarula/cothority/skipchain/proto';
+import {Wallet} from '@gnarula/aries-framework-javascript/build/lib/wallet/Wallet';
 import {ConsentGrantMessage} from './ConsentGrantMessage';
-import logger from 'aries-framework-javascript/build/lib/logger';
-import {RosterWSConnection} from '@dedis/cothority/network';
+import logger from '@gnarula/aries-framework-javascript/build/lib/logger';
+import {RosterWSConnection} from '@gnarula/cothority/network';
 
 export class ConsentService {
   private connectionRepository: Repository<ConnectionRecord>;

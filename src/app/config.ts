@@ -1,4 +1,4 @@
-import {InitConfig} from 'aries-framework-javascript/build/lib/types';
+import {InitConfig} from '@gnarula/aries-framework-javascript/build/lib/types';
 import RNFS from 'react-native-fs';
 
 // ### Insert mediator URL here ###

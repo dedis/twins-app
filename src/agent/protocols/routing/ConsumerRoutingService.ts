@@ -1,9 +1,9 @@
-import {MessageSender} from 'aries-framework-javascript/build/lib/agent/MessageSender';
-import {AgentConfig} from 'aries-framework-javascript/build/lib/agent/AgentConfig';
-import logger from 'aries-framework-javascript/build/lib/logger';
+import {MessageSender} from '@gnarula/aries-framework-javascript/build/lib/agent/MessageSender';
+import {AgentConfig} from '@gnarula/aries-framework-javascript/build/lib/agent/AgentConfig';
+import logger from '@gnarula/aries-framework-javascript/build/lib/logger';
 import {AddRouteMessage} from './AddRouteMessage';
-import {createOutboundMessage} from 'aries-framework-javascript/build/lib/protocols/helpers';
-import {ConsumerRoutingService} from 'aries-framework-javascript/build/lib/protocols/routing/ConsumerRoutingService';
+import {createOutboundMessage} from '@gnarula/aries-framework-javascript/build/lib/protocols/helpers';
+import {ConsumerRoutingService} from '@gnarula/aries-framework-javascript/build/lib/protocols/routing/ConsumerRoutingService';
 
 class CustomConsumerRoutingService extends ConsumerRoutingService {
   _agentConfig: AgentConfig;

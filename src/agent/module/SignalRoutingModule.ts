@@ -1,15 +1,15 @@
-import {AgentConfig} from 'aries-framework-javascript/build/lib/agent/AgentConfig';
-import {ProvisioningService} from 'aries-framework-javascript/build/lib/agent/ProvisioningService';
-import {ConnectionService} from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionService';
-import {MessageSender} from 'aries-framework-javascript/build/lib/agent/MessageSender';
-import logger from 'aries-framework-javascript/build/lib/logger';
-import {ConnectionResponseMessage} from 'aries-framework-javascript/build/lib/protocols/connections/ConnectionResponseMessage';
-import {Wallet} from 'aries-framework-javascript/build/lib/wallet/Wallet';
-import {ConnectionState} from 'aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
-import {createOutboundMessage} from 'aries-framework-javascript/build/lib/protocols/helpers';
+import {AgentConfig} from '@gnarula/aries-framework-javascript/build/lib/agent/AgentConfig';
+import {ProvisioningService} from '@gnarula/aries-framework-javascript/build/lib/agent/ProvisioningService';
+import {ConnectionService} from '@gnarula/aries-framework-javascript/build/lib/protocols/connections/ConnectionService';
+import {MessageSender} from '@gnarula/aries-framework-javascript/build/lib/agent/MessageSender';
+import logger from '@gnarula/aries-framework-javascript/build/lib/logger';
+import {ConnectionResponseMessage} from '@gnarula/aries-framework-javascript/build/lib/protocols/connections/ConnectionResponseMessage';
+import {Wallet} from '@gnarula/aries-framework-javascript/build/lib/wallet/Wallet';
+import {ConnectionState} from '@gnarula/aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
+import {createOutboundMessage} from '@gnarula/aries-framework-javascript/build/lib/protocols/helpers';
 import {CreateInboxMessage} from '../protocols/routing/CreateInboxMessage';
-import {AgentMessage} from 'aries-framework-javascript/build/lib/agent/AgentMessage';
-import {ConsumerRoutingService} from 'aries-framework-javascript/build/lib/protocols/routing/ConsumerRoutingService';
+import {AgentMessage} from '@gnarula/aries-framework-javascript/build/lib/agent/AgentMessage';
+import {ConsumerRoutingService} from '@gnarula/aries-framework-javascript/build/lib/protocols/routing/ConsumerRoutingService';
 
 export class SignalRRoutingModule {
   private agentConfig: AgentConfig;

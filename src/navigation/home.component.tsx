@@ -15,7 +15,7 @@ import {EdgeAgent} from 'src/agent/agent';
 import {agentConfig, genesis_txn, walletPath} from 'src/app/config';
 import {useDispatch} from 'react-redux';
 import {addConnections} from 'src/navigation/connections/connectionsSlice';
-import {ConnectionState} from 'aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
+import {ConnectionState} from '@gnarula/aries-framework-javascript/build/lib/protocols/connections/domain/ConnectionState';
 import * as Keychain from 'react-native-keychain';
 import agentModule from 'src/agent/agent';
 import * as secrets from 'secrets.js-grempe';
