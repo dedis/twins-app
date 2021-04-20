@@ -60,7 +60,9 @@ export const ConsentInformationRequestScreen = ({navigation}) => {
   };
 
   const onDeny = async () => {
-    ToastAndroid.show('Unimplemented 🙈', ToastAndroid.SHORT);
+    setBusy(true);
+    await (agent as EdgeAgent).consentModule.denyConsent(notificationId);
+    setBusy(false);
   };
 
   const waiting = (
