@@ -35,6 +35,8 @@ import {Wallet} from '@gnarula/aries-framework-javascript/build/lib/wallet/Walle
 import {ConsentGrantMessage} from './ConsentGrantMessage';
 import logger from '@gnarula/aries-framework-javascript/build/lib/logger';
 import {RosterWSConnection} from '@gnarula/cothority/network';
+import { RecordType } from '@gnarula/aries-framework-javascript/build/lib/storage/BaseRecord';
+import { ConsentDenyMessage } from './ConsentDenyMessage';
 
 export class ConsentService {
   private connectionRepository: Repository<ConnectionRecord>;
@@ -220,6 +222,27 @@ export class ConsentService {
     consentGrantMessage.setThread({parentThreadId: record.id});
 
     return createOutboundMessage(connectionRecord, consentGrantMessage);
+  }
+
+  async denyConsent(invitationId: string) {
+    const record = await this.consentRepository.find(invitationId);
+    const connectionRecord = await this.connectionRepository.find(
+      record.connectionID!,
+    );
+
+    await this.consentRepository.update(record);
+    store.dispatch(
+      updateNotificationState({
+        id: invitationId,
+        state: NotificationState.CONSENT_DENIED,
+        payload: record.information!,
+      }),
+    );
+
+    const consentDenyMessage = new ConsentDenyMessage();
+    consentDenyMessage.setThread({ parentThreadId: record.id });
+
+    return createOutboundMessage(connectionRecord, consentDenyMessage);
   }
 
   private async getLatestBlock(

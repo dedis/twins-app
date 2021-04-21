@@ -25,4 +25,9 @@ export class ConsentModule {
     const req = await this.consentService.grantConsent(invitationId);
     return await this.messageSender.sendMessage(req);
   }
+
+  async denyConsent(invitationId: string) {
+    const req = await this.consentService.denyConsent(invitationId);
+    return await this.messageSender.sendMessage(req);
+  }
 }
