@@ -197,7 +197,8 @@ export class ConsentService {
     newDarc.rules.appendToRule('spawn:calypsoRead', identity, Rule.OR);
     const signer = new SignerDid(
       async (data: Buffer, _: string) => {
-        return await this.wallet.sign(data, verkey);
+        const signature = await this.wallet.sign(data, verkey);
+        return signature;
       },
       {did: publicDid, method: 'sov'},
     );

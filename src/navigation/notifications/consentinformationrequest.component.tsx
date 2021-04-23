@@ -152,7 +152,11 @@ export const ConsentInformationRequestScreen = ({navigation}) => {
           }}>
           <Card style={{marginBottom: 25}}>
             <View>
-              <Text style={styles.synopsis}>{payload.synopsis}</Text>
+              {payload.synopsis !== undefined && payload.synopsis.length > 0 && (
+                <View style={{marginBottom: 20}}>
+                  <Text style={styles.synopsis}>{payload.synopsis}</Text>
+                </View>
+              )}
               <Text style={styles.description}>{payload.description}</Text>
               {payload.contact.length > 0 && (
                 <View style={{marginTop: 20}}>
