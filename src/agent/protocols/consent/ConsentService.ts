@@ -21,7 +21,7 @@ import {ConnectionState} from '@gnarula/aries-framework-javascript/build/lib/pro
 import {InboundMessageContext} from '@gnarula/aries-framework-javascript/build/lib/agent/models/InboundMessageContext';
 import {ConsentInformationResponseMessage} from './ConsentInformationResponseMessage';
 import {Roster} from '@gnarula/cothority/network/proto';
-import {bcID, writeInstanceID, filename, documentDarc} from 'src/app/config';
+import {bcID, getWriteInstanceID, getFilename, getDocumentDarc} from 'src/app/config';
 import rosterData from 'src/app/roster';
 import {SkipchainRPC, SkipBlock} from '@gnarula/cothority/skipchain';
 import ByzCoinRPC from '@gnarula/cothority/byzcoin/byzcoin-rpc';
@@ -162,6 +162,8 @@ export class ConsentService {
       record.connectionID!,
     );
 
+    const {did: publicDid, verkey} = this.wallet.getPublicDid()!;
+
     // /*
     const roster = Roster.fromTOML(rosterData);
     const genesisBlock = Buffer.from(bcID, 'hex');
@@ -181,20 +183,22 @@ export class ConsentService {
       latestBlock,
     );
     console.log('Got rpc instance');
+
+    const documentDarc = getDocumentDarc(publicDid);
     const darc = await DarcInstance.fromByzcoin(
       byzcoinRPC,
       Buffer.from(documentDarc, 'hex'),
     );
     const newDarc = darc.darc.evolve();
     console.log('evolved darc in memory');
-    const {did: publicDid, verkey} = this.wallet.getPublicDid()!;
     const identityProps = {did: connectionRecord.theirDid, method: 'sov'}; // Other things not required since only toString is called on the identity
     const identity = new IdentityDid(identityProps);
     // await identity.init(); // no need to init
     newDarc.rules.appendToRule('spawn:calypsoRead', identity, Rule.OR);
     const signer = new SignerDid(
       async (data: Buffer, _: string) => {
-        return await this.wallet.sign(data, verkey);
+        const signature = await this.wallet.sign(data, verkey);
+        return signature;
       },
       {did: publicDid, method: 'sov'},
     );
@@ -215,6 +219,8 @@ export class ConsentService {
       }),
     );
 
+    const writeInstanceID = getWriteInstanceID(publicDid);
+    const filename = getFilename(publicDid);
     const consentGrantMessage = new ConsentGrantMessage({
       writeInstanceID,
       filename,

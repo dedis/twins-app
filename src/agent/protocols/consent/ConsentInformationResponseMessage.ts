@@ -3,10 +3,12 @@ import {MessageType} from './messages';
 
 export interface ConsentInformationResponseMessageOptions {
   id?: string;
+  synopsis: string;
   description: string;
   moreInfoLink: string;
   acceptText: string;
   denyText: string;
+  contact: string;
 }
 
 export class ConsentInformationResponseMessage extends AgentMessage {
@@ -19,10 +21,12 @@ export class ConsentInformationResponseMessage extends AgentMessage {
     super();
     if (options) {
       this.id = options.id || this.generateId();
+      this.synopsis = options.synopsis;
       this.description = options.description;
       this.moreInfoLink = options.moreInfoLink;
       this.acceptText = options.acceptText;
       this.denyText = options.denyText;
+      this.contact = options.contact;
     }
   }
 
@@ -31,6 +35,8 @@ export class ConsentInformationResponseMessage extends AgentMessage {
 
   public id!: string;
 
+  public contact!: string;
+  public synopsis!: string;
   public description!: string;
   public moreInfoLink!: string;
   public acceptText!: string;

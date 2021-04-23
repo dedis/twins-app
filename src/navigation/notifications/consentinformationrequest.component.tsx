@@ -32,6 +32,10 @@ export const ConsentInformationRequestScreen = ({navigation}) => {
     container: {
       flex: 1,
     },
+    synopsis: {
+      color: 'color-basic-300',
+      fontSize: 15,
+    },
     description: {
       color: 'color-basic-500',
       fontSize: 15,
@@ -148,7 +152,19 @@ export const ConsentInformationRequestScreen = ({navigation}) => {
           }}>
           <Card style={{marginBottom: 25}}>
             <View>
+              {payload.synopsis !== undefined && payload.synopsis.length > 0 && (
+                <View style={{marginBottom: 20}}>
+                  <Text style={styles.synopsis}>{payload.synopsis}</Text>
+                </View>
+              )}
               <Text style={styles.description}>{payload.description}</Text>
+              {payload.contact.length > 0 && (
+                <View style={{marginTop: 20}}>
+                  <Text style={styles.description}>
+                    Contact: {payload.contact}
+                  </Text>
+                </View>
+              )}
               {payload.moreInfoLink.length > 0 && (
                 <View style={{marginTop: 20}}>
                   <Text style={styles.description}>
