@@ -1,32 +1,10 @@
-import uuid from 'uuid/v4';
-
 export enum MessageType {
-  ConsentRequest = 'https://dedis.epfl.ch/consent/1.0/consent-request',
-  ConsentChallengeRequest = 'https://dedis.epfl.ch/consent/1.0/consent-challenge-request',
-  ConsentChallengeResponse = 'https://dedis.epfl.ch/consent/1.0/consent-challenge-response',
-  ConsentResponse = 'https://dedis.epfl.ch/consent/1.0/consent-response'
-}
-
-export enum ConsentStatus {
-  UNDECIDED,
-  DENIED,
-  GRANTED,
-  REVOKED,
-}
-
-export function createConsentChallengeRequest() {
-  return {
-    '@id': uuid(),
-    '@type': MessageType.ConsentChallengeRequest,
-    nonce: uuid(),
-  }
-}
-
-export function createConsentResponse(documentDarc: string, status: ConsentStatus) {
-  return {
-    '@id': uuid(),
-    '@type': MessageType.ConsentResponse,
-    documentDarc,
-    status,
-  }
+  InvitationMessage = 'https://dedis.epfl.ch/consent/1.0/information/invite',
+  RequestMessage = 'https://dedis.epfl.ch/consent/1.0/information/request',
+  ResponseMessage = 'https://dedis.epfl.ch/consent/1.0/information/response',
+  ResponseFailureMessage = 'https://dedis.epfl.ch/consent/1.0/information/failure',
+  ConsentGrantMessage = 'https://dedis.epfl.ch/consent/1.0/consent/grant',
+  ConsentDenyMessage = 'https://dedis.epfl.ch/consent/1.0/consent/deny',
+  DecryptionSuccess = 'https://dedis.epfl.ch/consent/1.0/decryption/success',
+  DecryptionFailure = 'https://dedis.epfl.ch/consent/1.0/decryption/failure',
 }
